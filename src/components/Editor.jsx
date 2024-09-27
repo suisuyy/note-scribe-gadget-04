@@ -10,8 +10,12 @@ export const Editor = ({ content, renderMarkdown, darkMode, fontSize, showLineNu
   const editorExtensions = [
     markdown({ base: markdownLanguage, codeLanguages: languages }),
     EditorView.lineWrapping,
-    showLineNumbers && lineNumbers(),
-  ].filter(Boolean);
+  ];
+
+  // Only add line numbers extension if showLineNumbers is true
+  if (showLineNumbers) {
+    editorExtensions.push(lineNumbers());
+  }
 
   return (
     <div className="p-4">
