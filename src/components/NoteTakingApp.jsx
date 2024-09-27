@@ -4,6 +4,7 @@ import { createClient } from "@supabase/supabase-js";
 import { v4 as uuidv4 } from "uuid";
 import { MenuBar } from "./MenuBar";
 import { Editor } from "./Editor";
+import { toast } from "sonner";
 
 const supabaseUrl = "https://vyqkmpjwvoodeeskzvrk.supabase.co";
 const supabaseKey = "eyJhbGciOiJIUzI1NiIsInR5cCI6IkpXVCJ9.eyJpc3MiOiJzdXBhYmFzZSIsInJlZiI6InZ5cWttcGp3dm9vZGVlc2t6dnJrIiwicm9sZSI6InNlcnZpY2Vfcm9sZSIsImlhdCI6MTcyNzA2MDI1MCwiZXhwIjoyMDQyNjM2MjUwfQ.I-vbtdO1vl0RlNW_Ww7n4mo6Pl3NiMfJ0vWvcMdSq50";
@@ -95,7 +96,7 @@ export default function NoteTakingApp() {
   const shareNote = () => {
     const shareUrl = `${window.location.origin}?id=${noteId}`;
     navigator.clipboard.writeText(shareUrl);
-    alert("Share URL copied to clipboard!");
+    toast.success("Share URL copied to clipboard!");
   };
 
   const handleSetNoteId = async (newId) => {
@@ -152,6 +153,12 @@ export default function NoteTakingApp() {
     return () => clearTimeout(autoSave);
   }, [content, noteId]);
 
+  const copyUrlToClipboard = () => {
+    const url = `${window.location.origin}?id=${noteId}`;
+    navigator.clipboard.writeText(url);
+    toast.success("URL copied to clipboard!");
+  };
+
   return (
     <div ref={appRef} className={`min-h-screen ${darkMode ? "dark" : ""}`}>
       <div
@@ -189,7 +196,12 @@ export default function NoteTakingApp() {
         />
         <div className="fixed bottom-0 left-0 right-0 p-2 bg-gray-100 dark:bg-gray-800 text-sm flex justify-between items-center">
           <span>Word count: {wordCount}</span>
-          <span>Note ID: {noteId}</span>
+          <span
+            className="cursor-pointer hover:underline"
+            onClick={copyUrlToClipboard}
+          >
+            {`${window.location.origin}?id=${noteId}`}
+          </span>
         </div>
         <input
           type="file"
