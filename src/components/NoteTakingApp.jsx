@@ -2,14 +2,6 @@ import React, { useState, useRef, useCallback, useEffect } from "react";
 import { useNavigate, useLocation } from "react-router-dom";
 import { createClient } from "@supabase/supabase-js";
 import { v4 as uuidv4 } from "uuid";
-import { Button } from "@/components/ui/button";
-import { Input } from "@/components/ui/input";
-import {
-  Dialog,
-  DialogContent,
-  DialogHeader,
-  DialogTitle,
-} from "@/components/ui/dialog";
 import { MenuBar } from "./MenuBar";
 import { Editor } from "./Editor";
 
@@ -26,32 +18,14 @@ export default function NoteTakingApp() {
   const [darkMode, setDarkMode] = useState(false);
   const [wordCount, setWordCount] = useState(0);
   const [isFullscreen, setIsFullscreen] = useState(false);
-  const [currentUrl, setCurrentUrl] = useState("");
   const [noteId, setNoteId] = useState("");
   const [isSettingsOpen, setIsSettingsOpen] = useState(false);
-  const [isPromptEditOpen, setIsPromptEditOpen] = useState(false);
-  const [currentPrompt, setCurrentPrompt] = useState({ name: "", prompt: "" });
   const [showLineNumbers, setShowLineNumbers] = useState(true);
   const fileInputRef = useRef(null);
   const appRef = useRef(null);
   const editorRef = useRef(null);
   const navigate = useNavigate();
   const location = useLocation();
-
-  const [aiActions, setAiActions] = useState(() => {
-    const savedActions = localStorage.getItem("aiActions");
-    return savedActions
-      ? JSON.parse(savedActions)
-      : [
-          { name: "Ask", prompt: "Please answer the following question:" },
-          { name: "Correct", prompt: "Please correct any errors in the following text:" },
-          { name: "Translate", prompt: "Please translate the following text to English:" },
-        ];
-  });
-
-  useEffect(() => {
-    localStorage.setItem("aiActions", JSON.stringify(aiActions));
-  }, [aiActions]);
 
   const handleChange = useCallback(
     (value, viewUpdate) => {
@@ -128,7 +102,7 @@ export default function NoteTakingApp() {
     setNoteId(newId);
     setIsSettingsOpen(false);
     await loadNote(newId);
-    localStorage.setItem("noteId", newId);
+    navigate(`?id=${newId}`, { replace: true });
   };
 
   const loadNote = async (id) => {
@@ -154,65 +128,21 @@ export default function NoteTakingApp() {
     }
   };
 
-  const getSelectedText = () => {
-    if (editorRef.current) {
-      const selection = editorRef.current.state.selection.main;
-      return editorRef.current.state.sliceDoc(selection.from, selection.to);
-    }
-    return "";
-  };
-
-  const sendAIRequest = async (prompt) => {
-    if (!editorRef.current) {
-      console.error("Editor not initialized");
-      return;
-    }
-    const selectedText = getSelectedText();
-    const fullPrompt = `${prompt}\n\nSelected text:\n${selectedText}`;
-    try {
-      const response = await fetch("https://simpleai.devilent2.workers.dev", {
-        method: "POST",
-        headers: {
-          "Content-Type": "application/x-www-form-urlencoded",
-        },
-        body: new URLSearchParams({ q: fullPrompt }),
-      });
-      const data = await response.text();
-      // Insert the AI response after the cursor
-      const cursor = editorRef.current.state.selection.main.to;
-      editorRef.current.dispatch({
-        changes: { from: cursor, insert: `\n\nAI Response:\n${data}\n\n` },
-      });
-    } catch (error) {
-      console.error("Error sending AI request:", error);
-    }
-  };
-
-  const handleAddPrompt = () => {
-    setCurrentPrompt({ name: "", prompt: "" });
-    setIsPromptEditOpen(true);
-  };
-
-  const handleEditPrompt = (action) => {
-    setCurrentPrompt(action);
-    setIsPromptEditOpen(true);
-  };
-
   useEffect(() => {
     const initializeNote = async () => {
       const searchParams = new URLSearchParams(location.search);
       let id = searchParams.get("id");
       if (!id) {
         id = localStorage.getItem("noteId") || uuidv4();
+        navigate(`?id=${id}`, { replace: true });
       }
       setNoteId(id);
       await loadNote(id);
-      setCurrentUrl(`${window.location.origin}?id=${id}`);
       localStorage.setItem("noteId", id);
     };
 
     initializeNote();
-  }, [location]);
+  }, [location, navigate]);
 
   useEffect(() => {
     const autoSave = setTimeout(() => {
@@ -247,14 +177,6 @@ export default function NoteTakingApp() {
           setDarkMode={setDarkMode}
           toggleFullscreen={toggleFullscreen}
           setIsSettingsOpen={setIsSettingsOpen}
-          aiActions={aiActions}
-          sendAIRequest={sendAIRequest}
-          handleEditPrompt={handleEditPrompt}
-          handleAddPrompt={handleAddPrompt}
-          isPromptEditOpen={isPromptEditOpen}
-          setIsPromptEditOpen={setIsPromptEditOpen}
-          currentPrompt={currentPrompt}
-          setCurrentPrompt={setCurrentPrompt}
         />
         <Editor
           content={content}
@@ -277,21 +199,6 @@ export default function NoteTakingApp() {
           accept=".txt,.md"
         />
       </div>
-      <Dialog open={isSettingsOpen} onOpenChange={setIsSettingsOpen}>
-        <DialogContent>
-          <DialogHeader>
-            <DialogTitle>Set Note ID</DialogTitle>
-          </DialogHeader>
-          <div className="flex items-center space-x-2">
-            <Input
-              placeholder="Enter note ID"
-              value={noteId}
-              onChange={(e) => setNoteId(e.target.value)}
-            />
-            <Button onClick={() => handleSetNoteId(noteId)}>Set ID</Button>
-          </div>
-        </DialogContent>
-      </Dialog>
     </div>
   );
 }
