@@ -15,9 +15,7 @@ import { Input } from "@/components/ui/input";
 import { Button } from "@/components/ui/button";
 import { Label } from "@/components/ui/label";
 import Notification from './Notification';
-
-const supabaseUrl = "https://vyqkmpjwvoodeeskzvrk.supabase.co";
-const supabaseKey = "eyJhbGciOiJIUzI1NiIsInR5cCI6IkpXVCJ9.eyJpc3MiOiJzdXBhYmFzZSIsInJlZiI6InZ5cWttcGp3dm9vZGVlc2t6dnJrIiwicm9sZSI6InNlcnZpY2Vfcm9sZSIsImlhdCI6MTcyNzA2MDI1MCwiZXhwIjoyMDQyNjM2MjUwfQ.I-vbtdO1vl0RlNW_Ww7n4mo6Pl3NiMfJ0vWvcMdSq50";
+import { supabaseUrl, supabaseKey } from '../supabaseConfig'; // Import the configuration
 
 const supabase = createClient(supabaseUrl, supabaseKey);
 
@@ -71,6 +69,7 @@ export default function NoteTakingApp() {
   const removeNotification = (id) => {
     setNotifications((prev) => prev.filter((notif) => notif.id !== id));
   };
+
 
   const getSelectedText = () => {
     if (editorRef.current) {
@@ -160,6 +159,7 @@ export default function NoteTakingApp() {
     }
   };
 
+
   const handleKeyDown = useCallback(
     (e) => {
       if (e.ctrlKey && e.key === 'Enter') {
@@ -186,6 +186,7 @@ export default function NoteTakingApp() {
     return () => window.removeEventListener('keydown', handleKeyDown);
   }, [handleKeyDown]);
 
+
   const handleChange = useCallback(
     (value, viewUpdate) => {
       setContent(value);
@@ -207,6 +208,7 @@ export default function NoteTakingApp() {
     }
   };
 
+
   const handleRedo = () => {
     if (historyIndex < history.length - 1) {
       setHistoryIndex(prevIndex => prevIndex + 1);
@@ -218,6 +220,7 @@ export default function NoteTakingApp() {
   const openFile = () => {
     fileInputRef.current?.click();
   };
+
 
   const handleFileChange = (event) => {
     const file = event.target.files?.[0];
@@ -232,6 +235,7 @@ export default function NoteTakingApp() {
     }
   };
 
+
   const downloadFile = () => {
     const element = document.createElement("a");
     const file = new Blob([content], { type: "text/plain" });
@@ -241,6 +245,7 @@ export default function NoteTakingApp() {
     element.click();
     document.body.removeChild(element);
   };
+
 
   const saveNote = async (noteContent) => {
     if (!noteId) return;
@@ -253,12 +258,14 @@ export default function NoteTakingApp() {
           last_updated: new Date().toISOString(),
         });
 
+
       if (error) throw error;
       console.log("Note saved successfully");
     } catch (error) {
       console.error("Error saving note:", error);
     }
   };
+
 
   const toggleFullscreen = () => {
     if (!document.fullscreenElement) {
@@ -270,11 +277,13 @@ export default function NoteTakingApp() {
     }
   };
 
+
   const shareNote = () => {
     const shareUrl = `${window.location.origin}?id=${noteId}`;
     navigator.clipboard.writeText(shareUrl);
     toast.success("Share URL copied to clipboard!");
   };
+
 
   const handleSetNoteId = async (newId) => {
     setNoteId(newId);
@@ -282,6 +291,7 @@ export default function NoteTakingApp() {
     await loadNote(newId);
     navigate(`?id=${newId}`, { replace: true });
   };
+
 
   const loadNote = async (id) => {
     try {
@@ -312,6 +322,7 @@ export default function NoteTakingApp() {
     }
   };
 
+
   useEffect(() => {
     const initializeNote = async () => {
       const searchParams = new URLSearchParams(location.search);
@@ -328,15 +339,18 @@ export default function NoteTakingApp() {
     initializeNote();
   }, [location, navigate]);
 
+
   const handleAddPrompt = () => {
     setCurrentPrompt({ name: "", prompt: "" });
     setIsPromptEditOpen(true);
   };
 
+
   const handleEditPrompt = (action) => {
     setCurrentPrompt(action);
     setIsPromptEditOpen(true);
   };
+
 
   const copyUrlToClipboard = () => {
     const url = `${window.location.origin}?id=${noteId}`;
