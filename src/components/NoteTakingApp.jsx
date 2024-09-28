@@ -13,7 +13,7 @@ import {
 } from "@/components/ui/dialog";
 import { Input } from "@/components/ui/input";
 import { Button } from "@/components/ui/button";
-import { Label } from "@/components/ui/label"; // Add this import
+import { Label } from "@/components/ui/label";
 
 const supabaseUrl = "https://vyqkmpjwvoodeeskzvrk.supabase.co";
 const supabaseKey = "eyJhbGciOiJIUzI1NiIsInR5cCI6IkpXVCJ9.eyJpc3MiOiJzdXBhYmFzZSIsInJlZiI6InZ5cWttcGp3dm9vZGVlc2t6dnJrIiwicm9sZSI6InNlcnZpY2Vfcm9sZSIsImlhdCI6MTcyNzA2MDI1MCwiZXhwIjoyMDQyNjM2MjUwfQ.I-vbtdO1vl0RlNW_Ww7n4mo6Pl3NiMfJ0vWvcMdSq50";
@@ -49,7 +49,6 @@ export default function NoteTakingApp() {
       saveNote(value);
       editorRef.current = viewUpdate.view;
 
-      // Add to history
       setHistory(prevHistory => [...prevHistory.slice(0, historyIndex + 1), value]);
       setHistoryIndex(prevIndex => prevIndex + 1);
     },
@@ -135,7 +134,7 @@ export default function NoteTakingApp() {
     setNoteId(newId);
     setIsSettingsOpen(false);
     await loadNote(newId);
-    navigate(`/?id=${newId}`, { replace: true });
+    navigate(`?id=${newId}`, { replace: true });
   };
 
   const loadNote = async (id) => {
@@ -150,13 +149,11 @@ export default function NoteTakingApp() {
       if (data) {
         setContent(data.content);
         setWordCount(data.content.trim().split(/\s+/).length);
-        // Reset history
         setHistory([data.content]);
         setHistoryIndex(0);
       } else {
         setContent("");
         setWordCount(0);
-        // Reset history
         setHistory([]);
         setHistoryIndex(-1);
       }
@@ -164,7 +161,6 @@ export default function NoteTakingApp() {
       console.error("Error fetching note:", error);
       setContent("");
       setWordCount(0);
-      // Reset history
       setHistory([]);
       setHistoryIndex(-1);
     }
@@ -194,7 +190,6 @@ export default function NoteTakingApp() {
         body: new URLSearchParams({ q: fullPrompt }),
       });
       const data = await response.text();
-      // Insert the AI response after the cursor
       const cursor = editorRef.current.state.selection.main.to;
       editorRef.current.dispatch({
         changes: { from: cursor, insert: `\n\nAI Response:\n${data}\n\n` },
@@ -235,12 +230,10 @@ export default function NoteTakingApp() {
         (action) => action.name === currentPrompt.name
       );
       if (existingIndex !== -1) {
-        // Update existing prompt
         const updatedActions = [...aiActions];
         updatedActions[existingIndex] = currentPrompt;
         setAiActions(updatedActions);
       } else {
-        // Add new prompt
         setAiActions([...aiActions, currentPrompt]);
       }
       setIsPromptEditOpen(false);
@@ -255,6 +248,7 @@ export default function NoteTakingApp() {
       let id = searchParams.get("id");
       if (!id) {
         id = localStorage.getItem("noteId") || uuidv4();
+        navigate(`?id=${id}`, { replace: true });
       }
       setNoteId(id);
       await loadNote(id);
@@ -262,7 +256,7 @@ export default function NoteTakingApp() {
     };
 
     initializeNote();
-  }, [location]);
+  }, [location, navigate]);
 
   useEffect(() => {
     const autoSave = setTimeout(() => {
