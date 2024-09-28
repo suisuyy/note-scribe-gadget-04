@@ -8,6 +8,8 @@ export const NoteControls = ({
   shareNote,
   renderMarkdown,
   setRenderMarkdown,
+  showLineNumbers,
+  setShowLineNumbers,
   uiScale,
   setUiScale,
   fontSize,
@@ -24,6 +26,8 @@ export const NoteControls = ({
   setIsPromptEditOpen,
   currentPrompt,
   setCurrentPrompt,
+  handleUndo,
+  handleRedo,
 }) => {
   return (
     <MenuBar
@@ -33,6 +37,8 @@ export const NoteControls = ({
       shareNote={shareNote}
       renderMarkdown={renderMarkdown}
       setRenderMarkdown={setRenderMarkdown}
+      showLineNumbers={showLineNumbers}
+      setShowLineNumbers={setShowLineNumbers}
       uiScale={uiScale}
       setUiScale={setUiScale}
       fontSize={fontSize}
@@ -49,6 +55,8 @@ export const NoteControls = ({
       setIsPromptEditOpen={setIsPromptEditOpen}
       currentPrompt={currentPrompt}
       setCurrentPrompt={setCurrentPrompt}
+      handleUndo={handleUndo}
+      handleRedo={handleRedo}
     />
   );
 };
