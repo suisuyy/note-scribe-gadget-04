@@ -1,4 +1,4 @@
-import React, { useCallback } from 'react';
+import React from 'react';
 import CodeMirror from "@uiw/react-codemirror";
 import { markdown, markdownLanguage } from "@codemirror/lang-markdown";
 import { languages } from "@codemirror/language-data";
@@ -60,23 +60,21 @@ export const NoteEditor = ({ content, renderMarkdown, darkMode, fontSize, showLi
     editorExtensions.push(lineNumbers());
   }
 
-  const handleEditorChange = useCallback((value, viewUpdate) => {
+  const handleEditorChange = (value, viewUpdate) => {
     const formattedValue = value.replace(
       /AI Response:/g,
       `AI Response (${formatDateTime()}):`
     );
     handleChange(formattedValue, viewUpdate);
-  }, [handleChange]);
+  };
 
-  const getSelectedText = useCallback(() => {
-    if (editorRef.current) {
-      const selection = editorRef.current.state.selection.main;
-      if (selection.from !== selection.to) {
-        return editorRef.current.state.sliceDoc(selection.from, selection.to);
-      }
+  const getSelectedText = (editor) => {
+    const selection = editor.state.selection.main;
+    if (selection.from !== selection.to) {
+      return editor.state.sliceDoc(selection.from, selection.to);
     }
     return null;
-  }, [editorRef]);
+  };
 
   return (
     <div>
@@ -95,8 +93,8 @@ export const NoteEditor = ({ content, renderMarkdown, darkMode, fontSize, showLi
             editorRef.current = view;
           }}
           style={{ fontSize: `${fontSize}px` }}
-          onSelectionSet={() => {
-            const selectedText = getSelectedText();
+          onSelectionSet={(editor) => {
+            const selectedText = getSelectedText(editor);
             if (selectedText) {
               sendAIRequest("Please process the following text:", selectedText);
             }

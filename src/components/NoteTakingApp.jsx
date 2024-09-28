@@ -197,7 +197,6 @@ export default function NoteTakingApp() {
     return "No text selected";
   };
 
-
   const sendAIRequest = async (prompt, selectedText) => {
     if (!editorRef.current) {
       console.error("Editor not initialized");
@@ -323,7 +322,6 @@ export default function NoteTakingApp() {
   const toggleShowLineNumbers = () => setShowLineNumbers(prev => !prev);
   const toggleDarkMode = () => setDarkMode(prev => !prev);
 
-
   return (
     <div ref={appRef} className={`min-h-screen ${darkMode ? "dark" : ""}`}>
       <div
@@ -372,38 +370,73 @@ export default function NoteTakingApp() {
           editorRef={editorRef}
           sendAIRequest={sendAIRequest}
         />
-
-        <HelpDialog isOpen={isHelpOpen} setIsOpen={setIsHelpOpen} />
-
-        <Dialog open={isSettingsOpen} onOpenChange={setIsSettingsOpen}>
-          <DialogContent>
-            <DialogHeader>
-              <DialogTitle>Set Note ID</DialogTitle>
-            </DialogHeader>
-            <div className="grid gap-4 py-4">
-              <div className="grid grid-cols-4 items-center gap-4">
-                <Label htmlFor="name" className="text-right">
-                  Note ID
-                </Label>
-                <Input
-                  id="name"
-                  value={noteId}
-                  onChange={(e) => setNoteId(e.target.value)}
-                  className="col-span-3"
-                />
-              </div>
-            </div>
-            <Button onClick={() => handleSetNoteId(noteId)}>Save</Button>
-          </DialogContent>
-        </Dialog>
-
+        
+        <div className="fixed bottom-0 left-0 right-0 p-2 bg-gray-100 dark:bg-gray-800 text-sm flex justify-between items-center">
+          <span>Word count: {wordCount}</span>
+          <button
+            onClick={copyUrlToClipboard}
+            className="text-blue-500 hover:text-blue-700 dark:text-blue-400 dark:hover:text-blue-300"
+          >
+            {`${window.location.origin}?id=${noteId}`}
+          </button>
+        </div>
+        
         <input
           type="file"
           ref={fileInputRef}
-          style={{ display: 'none' }}
           onChange={handleFileChange}
+          style={{ display: "none" }}
+          accept=".txt,.md"
         />
       </div>
+      <Dialog open={isSettingsOpen} onOpenChange={setIsSettingsOpen}>
+        <DialogContent>
+          <DialogHeader>
+            <DialogTitle>Set Note ID</DialogTitle>
+          </DialogHeader>
+          <div className="flex items-center space-x-2">
+            <Input
+              placeholder="Enter note ID"
+              value={noteId}
+              onChange={(e) => setNoteId(e.target.value)}
+            />
+            <Button onClick={() => handleSetNoteId(noteId)}>Set ID</Button>
+          </div>
+        </DialogContent>
+      </Dialog>
+      <Dialog open={isPromptEditOpen} onOpenChange={setIsPromptEditOpen}>
+        <DialogContent>
+          <DialogHeader>
+            <DialogTitle>
+              {currentPrompt.name ? "Edit AI Prompt" : "Add New AI Prompt"}
+            </DialogTitle>
+          </DialogHeader>
+          <div className="space-y-4">
+            <div>
+              <Label htmlFor="prompt-name">Name</Label>
+              <Input
+                id="prompt-name"
+                value={currentPrompt.name}
+                onChange={(e) =>
+                  setCurrentPrompt({ ...currentPrompt, name: e.target.value })
+                }
+              />
+            </div>
+            <div>
+              <Label htmlFor="prompt-content">Prompt</Label>
+              <Input
+                id="prompt-content"
+                value={currentPrompt.prompt}
+                onChange={(e) =>
+                  setCurrentPrompt({ ...currentPrompt, prompt: e.target.value })
+                }
+              />
+            </div>
+            <Button onClick={handleSavePrompt}>Save Prompt</Button>
+          </div>
+        </DialogContent>
+      </Dialog>
+      <HelpDialog isOpen={isHelpOpen} setIsOpen={setIsHelpOpen} />
     </div>
   );
 }
