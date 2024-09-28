@@ -166,6 +166,38 @@ export default function NoteTakingApp() {
     }
   };
 
+  const getSelectedText = () => {
+    if (editorRef.current) {
+      const selection = editorRef.current.state.selection.main;
+      if (selection.from !== selection.to) {
+        return editorRef.current.state.sliceDoc(selection.from, selection.to);
+      } else {
+        const content = editorRef.current.state.doc.toString();
+        const cursorPos = selection.from;
+        
+        let startPos = cursorPos;
+        let endPos = cursorPos;
+        let newlineCount = 0;
+        
+        while (startPos > 0 && newlineCount < 3) {
+          startPos--;
+          if (content[startPos] === '\n') newlineCount++;
+        }
+        
+        newlineCount = 0;
+        
+        while (endPos < content.length && newlineCount < 3) {
+          if (content[endPos] === '\n') newlineCount++;
+          endPos++;
+        }
+        
+        return content.slice(startPos, endPos).trim();
+      }
+    }
+    return "No text selected";
+  };
+
+
   const sendAIRequest = async (prompt, selectedText) => {
     if (!editorRef.current) {
       console.error("Editor not initialized");
@@ -290,6 +322,7 @@ export default function NoteTakingApp() {
   const toggleRenderMarkdown = () => setRenderMarkdown(prev => !prev);
   const toggleShowLineNumbers = () => setShowLineNumbers(prev => !prev);
   const toggleDarkMode = () => setDarkMode(prev => !prev);
+
 
   return (
     <div ref={appRef} className={`min-h-screen ${darkMode ? "dark" : ""}`}>

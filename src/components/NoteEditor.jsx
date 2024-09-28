@@ -43,6 +43,17 @@ export const NoteEditor = ({ content, renderMarkdown, darkMode, fontSize, showLi
         },
       },
     }),
+    EditorView.domEventHandlers({
+      dblclick: (event, view) => {
+        const pos = view.posAtCoords({ x: event.clientX, y: event.clientY });
+        if (pos) {
+          const line = view.state.doc.lineAt(pos);
+          const selectedText = line.text;
+          sendAIRequest("Please correct any errors in the following text just give answer:", selectedText);
+        }
+        return false;
+      },
+    }),
   ];
 
   if (showLineNumbers) {
@@ -62,19 +73,10 @@ export const NoteEditor = ({ content, renderMarkdown, darkMode, fontSize, showLi
       const selection = editorRef.current.state.selection.main;
       if (selection.from !== selection.to) {
         return editorRef.current.state.sliceDoc(selection.from, selection.to);
-      } else {
-        // If no text is selected, get the current line
-        const line = editorRef.current.state.doc.lineAt(selection.from);
-        return line.text;
       }
     }
-    return "No text selected";
+    return null;
   }, [editorRef]);
-
-  const handleAIRequest = useCallback(() => {
-    const selectedText = getSelectedText();
-    sendAIRequest("Please process the following text:", selectedText);
-  }, [getSelectedText, sendAIRequest]);
 
   return (
     <div>
@@ -93,11 +95,14 @@ export const NoteEditor = ({ content, renderMarkdown, darkMode, fontSize, showLi
             editorRef.current = view;
           }}
           style={{ fontSize: `${fontSize}px` }}
+          onSelectionSet={() => {
+            const selectedText = getSelectedText();
+            if (selectedText) {
+              sendAIRequest("Please process the following text:", selectedText);
+            }
+          }}
         />
       )}
-      <button onClick={handleAIRequest} className="mt-2 px-4 py-2 bg-blue-500 text-white rounded hover:bg-blue-600">
-        Process Selected Text
-      </button>
     </div>
   );
 };
