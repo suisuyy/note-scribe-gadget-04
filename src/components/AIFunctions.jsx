@@ -15,7 +15,7 @@ export const AIFunctions = ({ aiActions, setAiActions, editorRef }) => {
   const [currentPrompt, setCurrentPrompt] = useState({ name: "", prompt: "" });
 
   const sendAIRequest = async (prompt) => {
-    if (!editorRef.current) {
+    if (!editorRef || !editorRef.current) {
       console.error("Editor not initialized");
       return;
     }
@@ -41,7 +41,7 @@ export const AIFunctions = ({ aiActions, setAiActions, editorRef }) => {
   };
 
   const getSelectedText = () => {
-    if (editorRef.current) {
+    if (editorRef && editorRef.current) {
       const selection = editorRef.current.state.selection.main;
       return editorRef.current.state.sliceDoc(selection.from, selection.to);
     }
