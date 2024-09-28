@@ -6,6 +6,7 @@ import { toast } from "sonner";
 import { NoteEditor } from './NoteEditor';
 import { NoteControls } from './NoteControls';
 import { HelpDialog } from './HelpDialog';
+import { useKeyboardShortcut } from '../hooks/useKeyboardShortcut';
 import {
   Dialog,
   DialogContent,
@@ -245,6 +246,18 @@ export default function NoteTakingApp() {
       toast.error("Failed to send AI request");
     }
   };
+
+  const handleCtrlEnter = useCallback(() => {
+    if (editorRef.current) {
+      if (document.activeElement !== editorRef.current.dom) {
+        editorRef.current.focus();
+      } else {
+        sendAIRequest("Ask");
+      }
+    }
+  }, []);
+
+  useKeyboardShortcut('Enter', true, handleCtrlEnter);
 
   const [aiActions, setAiActions] = useState(() => {
     const savedActions = localStorage.getItem("aiActions");
