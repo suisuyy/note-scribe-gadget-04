@@ -50,7 +50,9 @@ export default function NoteTakingApp() {
       setContent(value);
       setWordCount(value.trim().split(/\s+/).length);
       saveNote(value);
-      editorRef.current = viewUpdate.view;
+      if (viewUpdate && viewUpdate.view) {
+        editorRef.current = viewUpdate.view;
+      }
 
       setHistory(prevHistory => [...prevHistory.slice(0, historyIndex + 1), value]);
       setHistoryIndex(prevIndex => prevIndex + 1);
@@ -371,13 +373,13 @@ export default function NoteTakingApp() {
         />
         
         <NoteEditor
+          ref={editorRef}
           content={content}
           renderMarkdown={renderMarkdown}
           darkMode={darkMode}
           fontSize={fontSize}
           showLineNumbers={showLineNumbers}
           handleChange={handleChange}
-          editorRef={editorRef}
         />
         
         <div className="fixed bottom-0 left-0 right-0 p-2 bg-gray-100 dark:bg-gray-800 text-sm flex justify-between items-center">

@@ -1,4 +1,4 @@
-import React, { useImperativeHandle, forwardRef } from 'react';
+import React, { useImperativeHandle, forwardRef, useRef } from 'react';
 import CodeMirror from "@uiw/react-codemirror";
 import { markdown, markdownLanguage } from "@codemirror/lang-markdown";
 import { languages } from "@codemirror/language-data";
@@ -21,6 +21,8 @@ const formatDateTime = () => {
 };
 
 export const NoteEditor = forwardRef(({ content, renderMarkdown, darkMode, fontSize, showLineNumbers, handleChange }, ref) => {
+  const editorRef = useRef(null);
+
   const aiResponseExtension = StreamLanguage.define({
     token(stream) {
       if (stream.match(/AI Response \(\d{2}\/\d{2}\/\d{4}, \d{2}:\d{2}:\d{2}\):/, false)) {
@@ -59,8 +61,8 @@ export const NoteEditor = forwardRef(({ content, renderMarkdown, darkMode, fontS
 
   useImperativeHandle(ref, () => ({
     focus: () => {
-      if (ref.current) {
-        ref.current.view.focus();
+      if (editorRef.current) {
+        editorRef.current.view.focus();
       }
     }
   }));
@@ -79,9 +81,7 @@ export const NoteEditor = forwardRef(({ content, renderMarkdown, darkMode, fontS
           onChange={handleEditorChange}
           theme={darkMode ? "dark" : "light"}
           onCreateEditor={(view) => {
-            if (ref.current) {
-              ref.current.view = view;
-            }
+            editorRef.current = view;
           }}
           style={{ fontSize: `${fontSize}px` }}
         />
