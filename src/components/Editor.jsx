@@ -10,6 +10,7 @@ export const Editor = ({ content, renderMarkdown, darkMode, fontSize, showLineNu
   const [key, setKey] = useState(0);
 
   useEffect(() => {
+    // Force re-render of CodeMirror when showLineNumbers changes
     setKey(prevKey => prevKey + 1);
   }, [showLineNumbers]);
 
@@ -23,9 +24,9 @@ export const Editor = ({ content, renderMarkdown, darkMode, fontSize, showLineNu
   }
 
   return (
-    <div className="w-full p-0"> {/* Changed padding to 0 */}
+    <div className="p-4">
       {renderMarkdown ? (
-        <div className="prose max-w-none dark:prose-invert p-4">
+        <div className="prose max-w-none dark:prose-invert">
           <ReactMarkdown>{content}</ReactMarkdown>
         </div>
       ) : (
@@ -33,7 +34,6 @@ export const Editor = ({ content, renderMarkdown, darkMode, fontSize, showLineNu
           key={key}
           value={content}
           height="calc(100vh - 120px)"
-          width="100%"
           extensions={editorExtensions}
           onChange={handleChange}
           theme={darkMode ? "dark" : "light"}
