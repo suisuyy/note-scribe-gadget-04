@@ -362,16 +362,48 @@ export default function NoteTakingApp() {
           setIsHelpOpen={setIsHelpOpen}
         />
         
-    <NoteEditor
-      content={content}
-      renderMarkdown={renderMarkdown}
-      darkMode={darkMode}
-      fontSize={fontSize}
-      showLineNumbers={showLineNumbers}
-      handleChange={handleChange}
-      editorRef={editorRef}
-      sendAIRequest={sendAIRequest}
-    />
-    // ... (keep the rest of the JSX)
+        <NoteEditor
+          content={content}
+          renderMarkdown={renderMarkdown}
+          darkMode={darkMode}
+          fontSize={fontSize}
+          showLineNumbers={showLineNumbers}
+          handleChange={handleChange}
+          editorRef={editorRef}
+          sendAIRequest={sendAIRequest}
+        />
+
+        <HelpDialog isOpen={isHelpOpen} setIsOpen={setIsHelpOpen} />
+
+        <Dialog open={isSettingsOpen} onOpenChange={setIsSettingsOpen}>
+          <DialogContent>
+            <DialogHeader>
+              <DialogTitle>Set Note ID</DialogTitle>
+            </DialogHeader>
+            <div className="grid gap-4 py-4">
+              <div className="grid grid-cols-4 items-center gap-4">
+                <Label htmlFor="name" className="text-right">
+                  Note ID
+                </Label>
+                <Input
+                  id="name"
+                  value={noteId}
+                  onChange={(e) => setNoteId(e.target.value)}
+                  className="col-span-3"
+                />
+              </div>
+            </div>
+            <Button onClick={() => handleSetNoteId(noteId)}>Save</Button>
+          </DialogContent>
+        </Dialog>
+
+        <input
+          type="file"
+          ref={fileInputRef}
+          style={{ display: 'none' }}
+          onChange={handleFileChange}
+        />
+      </div>
+    </div>
   );
 }
