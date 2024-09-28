@@ -5,8 +5,6 @@ import { v4 as uuidv4 } from 'uuid';
 import { toast } from "sonner";
 import { NoteEditor } from './NoteEditor';
 import { NoteControls } from './NoteControls';
-import { HelpDialog } from './HelpDialog';
-import { useKeyboardShortcut } from '../hooks/useKeyboardShortcut';
 import {
   Dialog,
   DialogContent,
@@ -16,7 +14,9 @@ import {
 import { Input } from "@/components/ui/input";
 import { Button } from "@/components/ui/button";
 import { Label } from "@/components/ui/label";
-import { supabaseUrl, supabaseKey } from '../config/supabase';
+
+const supabaseUrl = "https://vyqkmpjwvoodeeskzvrk.supabase.co";
+const supabaseKey = "eyJhbGciOiJIUzI1NiIsInR5cCI6IkpXVCJ9.eyJpc3MiOiJzdXBhYmFzZSIsInJlZiI6InZ5cWttcGp3dm9vZGVlc2t6dnJrIiwicm9sZSI6InNlcnZpY2Vfcm9sZSIsImlhdCI6MTcyNzA2MDI1MCwiZXhwIjoyMDQyNjM2MjUwfQ.I-vbtdO1vl0RlNW_Ww7n4mo6Pl3NiMfJ0vWvcMdSq50";
 
 const supabase = createClient(supabaseUrl, supabaseKey);
 
@@ -33,7 +33,6 @@ export default function NoteTakingApp() {
   const [showLineNumbers, setShowLineNumbers] = useState(true);
   const [isPromptEditOpen, setIsPromptEditOpen] = useState(false);
   const [currentPrompt, setCurrentPrompt] = useState({ name: "", prompt: "" });
-  const [isHelpOpen, setIsHelpOpen] = useState(false);
   const fileInputRef = useRef(null);
   const appRef = useRef(null);
   const editorRef = useRef(null);
@@ -48,9 +47,7 @@ export default function NoteTakingApp() {
       setContent(value);
       setWordCount(value.trim().split(/\s+/).length);
       saveNote(value);
-      if (viewUpdate && viewUpdate.view) {
-        editorRef.current = viewUpdate.view;
-      }
+      editorRef.current = viewUpdate.view;
 
       setHistory(prevHistory => [...prevHistory.slice(0, historyIndex + 1), value]);
       setHistoryIndex(prevIndex => prevIndex + 1);
@@ -182,8 +179,8 @@ export default function NoteTakingApp() {
         let endPos = cursorPos;
         let newlineCount = 0;
         
-        // Find the start position (3 newlines before cursor)
-        while (startPos > 0 && newlineCount < 3) {
+        // Find the start position (2 newlines before cursor)
+        while (startPos > 0 && newlineCount < 2) {
           startPos--;
           if (content[startPos] === '\n') newlineCount++;
         }
@@ -191,8 +188,8 @@ export default function NoteTakingApp() {
         // Reset newline count for end position
         newlineCount = 0;
         
-        // Find the end position (3 newlines after cursor)
-        while (endPos < content.length && newlineCount < 3) {
+        // Find the end position (2 newlines after cursor)
+        while (endPos < content.length && newlineCount < 2) {
           if (content[endPos] === '\n') newlineCount++;
           endPos++;
         }
@@ -235,29 +232,10 @@ export default function NoteTakingApp() {
         changes: { from: lineEnd, insert: `\nAI Response (${formattedDateTime}):\n${data}\n` },
         selection: { anchor: lineEnd + 1 },
       });
-
-      // Show notification
-      toast(fullPrompt, {
-        duration: 5000,
-        description: "AI request sent",
-      });
     } catch (error) {
       console.error("Error sending AI request:", error);
-      toast.error("Failed to send AI request");
     }
   };
-
-  const handleCtrlEnter = useCallback(() => {
-    if (editorRef.current) {
-      if (document.activeElement !== editorRef.current.dom) {
-        editorRef.current.focus();
-      } else {
-        sendAIRequest("Ask");
-      }
-    }
-  }, []);
-
-  useKeyboardShortcut('Enter', true, handleCtrlEnter);
 
   const [aiActions, setAiActions] = useState(() => {
     const savedActions = localStorage.getItem("aiActions");
@@ -367,17 +345,16 @@ export default function NoteTakingApp() {
           setCurrentPrompt={setCurrentPrompt}
           handleUndo={handleUndo}
           handleRedo={handleRedo}
-          setIsHelpOpen={setIsHelpOpen}
         />
         
         <NoteEditor
-          ref={editorRef}
           content={content}
           renderMarkdown={renderMarkdown}
           darkMode={darkMode}
           fontSize={fontSize}
           showLineNumbers={showLineNumbers}
           handleChange={handleChange}
+          editorRef={editorRef}
         />
         
         <div className="fixed bottom-0 left-0 right-0 p-2 bg-gray-100 dark:bg-gray-800 text-sm flex justify-between items-center">
@@ -445,7 +422,6 @@ export default function NoteTakingApp() {
           </div>
         </DialogContent>
       </Dialog>
-      <HelpDialog isOpen={isHelpOpen} setIsOpen={setIsHelpOpen} />
     </div>
   );
 }

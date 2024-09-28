@@ -9,7 +9,6 @@ import {
   DialogTitle,
 } from "@/components/ui/dialog";
 import { Edit2, MessageSquare, Plus } from "lucide-react";
-import { toast } from "sonner";
 
 export const AIFunctions = ({ aiActions, sendAIRequest, handleEditPrompt, handleAddPrompt, isPromptEditOpen, setIsPromptEditOpen, currentPrompt, setCurrentPrompt, closeMenu }) => {
   const handleSavePrompt = () => {
@@ -22,22 +21,8 @@ export const AIFunctions = ({ aiActions, sendAIRequest, handleEditPrompt, handle
   };
 
   const handleAIAction = (prompt) => {
-    const selectedText = getSelectedText();
-    const fullPrompt = `${prompt}\n\nSelected text:\n${selectedText}`;
-    sendAIRequest(fullPrompt);
+    sendAIRequest(prompt);
     closeMenu();
-    
-    // Show notification
-    toast(fullPrompt, {
-      duration: 5000,
-      description: "AI request sent",
-    });
-  };
-
-  const getSelectedText = () => {
-    // Implement the logic to get selected text from the editor
-    // This is a placeholder and should be replaced with actual implementation
-    return window.getSelection().toString() || "No text selected";
   };
 
   return (
