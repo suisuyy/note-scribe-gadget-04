@@ -6,7 +6,6 @@ import CodeMirror from "@uiw/react-codemirror";
 import { markdown, markdownLanguage } from "@codemirror/lang-markdown";
 import { languages } from "@codemirror/language-data";
 import { EditorView } from "@codemirror/view";
-import { lineNumbers } from "@codemirror/view";
 import {
   Menubar,
   MenubarMenu,
@@ -41,7 +40,6 @@ import {
   Settings,
   Edit2,
   Plus,
-  List,
 } from "lucide-react";
 import ReactMarkdown from "react-markdown";
 
@@ -63,7 +61,6 @@ export default function NoteTakingApp() {
   const [isSettingsOpen, setIsSettingsOpen] = useState(false);
   const [isPromptEditOpen, setIsPromptEditOpen] = useState(false);
   const [currentPrompt, setCurrentPrompt] = useState({ name: "", prompt: "" });
-  const [showLineNumbers, setShowLineNumbers] = useState(true);
   const fileInputRef = useRef(null);
   const appRef = useRef(null);
   const editorRef = useRef(null);
@@ -73,8 +70,7 @@ export default function NoteTakingApp() {
   const editorExtensions = [
     markdown({ base: markdownLanguage, codeLanguages: languages }),
     EditorView.lineWrapping,
-    showLineNumbers && lineNumbers(),
-  ].filter(Boolean);
+  ];
 
   const handleChange = useCallback(
     (value, viewUpdate) => {
@@ -152,6 +148,7 @@ export default function NoteTakingApp() {
     setIsSettingsOpen(false);
     await loadNote(newId);
     localStorage.setItem("noteId", newId);
+    navigate(`/?id=${newId}`);
   };
 
   const loadNote = async (id) => {
@@ -323,19 +320,6 @@ export default function NoteTakingApp() {
                     id="markdown-switch"
                     checked={renderMarkdown}
                     onCheckedChange={setRenderMarkdown}
-                  />
-                </div>
-              </MenubarItem>
-              <MenubarItem>
-                <div className="flex items-center">
-                  <List className="mr-2 h-4 w-4" />
-                  <Label htmlFor="line-numbers-switch" className="mr-2">
-                    Show Line Numbers
-                  </Label>
-                  <Switch
-                    id="line-numbers-switch"
-                    checked={showLineNumbers}
-                    onCheckedChange={setShowLineNumbers}
                   />
                 </div>
               </MenubarItem>
