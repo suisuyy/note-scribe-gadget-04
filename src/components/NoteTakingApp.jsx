@@ -6,6 +6,7 @@ import { toast } from "sonner";
 import { NoteEditor } from './NoteEditor';
 import { NoteControls } from './NoteControls';
 import { HelpDialog } from './HelpDialog';
+import { useKeyboardShortcut } from '../hooks/useKeyboardShortcut';
 import {
   Dialog,
   DialogContent,
@@ -47,7 +48,9 @@ export default function NoteTakingApp() {
       setContent(value);
       setWordCount(value.trim().split(/\s+/).length);
       saveNote(value);
-      editorRef.current = viewUpdate.view;
+      if (viewUpdate && viewUpdate.view) {
+        editorRef.current = viewUpdate.view;
+      }
 
       setHistory(prevHistory => [...prevHistory.slice(0, historyIndex + 1), value]);
       setHistoryIndex(prevIndex => prevIndex + 1);
@@ -179,13 +182,16 @@ export default function NoteTakingApp() {
         let endPos = cursorPos;
         let newlineCount = 0;
         
+        // Find the start position (3 newlines before cursor)
         while (startPos > 0 && newlineCount < 3) {
           startPos--;
           if (content[startPos] === '\n') newlineCount++;
         }
         
+        // Reset newline count for end position
         newlineCount = 0;
         
+        // Find the end position (3 newlines after cursor)
         while (endPos < content.length && newlineCount < 3) {
           if (content[endPos] === '\n') newlineCount++;
           endPos++;
@@ -194,7 +200,7 @@ export default function NoteTakingApp() {
         return content.slice(startPos, endPos).trim();
       }
     }
-    return "No text selected";
+    return "";
   };
 
   const sendAIRequest = async (prompt) => {
@@ -230,23 +236,28 @@ export default function NoteTakingApp() {
         selection: { anchor: lineEnd + 1 },
       });
 
-      // Show notification with improved formatting
-      toast(
-        <div>
-          <p>{prompt}</p>
-          <p>Selected text:</p>
-          <p>{selectedText}</p>
-          <p>AI response sent</p>
-        </div>,
-        {
-          duration: 5000,
-        }
-      );
+      // Show notification
+      toast(fullPrompt, {
+        duration: 5000,
+        description: "AI request sent",
+      });
     } catch (error) {
       console.error("Error sending AI request:", error);
       toast.error("Failed to send AI request");
     }
   };
+
+  const handleCtrlEnter = useCallback(() => {
+    if (editorRef.current) {
+      if (document.activeElement !== editorRef.current.dom) {
+        editorRef.current.focus();
+      } else {
+        sendAIRequest("Ask");
+      }
+    }
+  }, []);
+
+  useKeyboardShortcut('Enter', true, handleCtrlEnter);
 
   const [aiActions, setAiActions] = useState(() => {
     const savedActions = localStorage.getItem("aiActions");
@@ -360,13 +371,13 @@ export default function NoteTakingApp() {
         />
         
         <NoteEditor
+          ref={editorRef}
           content={content}
           renderMarkdown={renderMarkdown}
           darkMode={darkMode}
           fontSize={fontSize}
           showLineNumbers={showLineNumbers}
           handleChange={handleChange}
-          editorRef={editorRef}
         />
         
         <div className="fixed bottom-0 left-0 right-0 p-2 bg-gray-100 dark:bg-gray-800 text-sm flex justify-between items-center">
