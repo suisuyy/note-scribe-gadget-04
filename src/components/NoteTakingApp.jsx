@@ -4,7 +4,7 @@ import { createClient } from '@supabase/supabase-js';
 import { v4 as uuidv4 } from 'uuid';
 import { toast } from "sonner";
 import { NoteEditor } from './NoteEditor';
-import { NoteControls } from './NoteControls';
+import { MenuBar } from './MenuBar';
 import { HelpDialog } from './HelpDialog';
 import {
   Dialog,
@@ -14,7 +14,6 @@ import {
 } from "@/components/ui/dialog";
 import { Input } from "@/components/ui/input";
 import { Button } from "@/components/ui/button";
-import { Label } from "@/components/ui/label";
 import { supabaseUrl, supabaseKey } from '../config/supabase';
 
 const supabase = createClient(supabaseUrl, supabaseKey);
@@ -330,7 +329,7 @@ export default function NoteTakingApp() {
         }`}
         style={{ fontSize: `${fontSize}px`, zoom: `${uiScale}%` }}
       >
-        <NoteControls
+        <MenuBar
           openFile={openFile}
           downloadFile={downloadFile}
           saveNote={() => saveNote(content)}

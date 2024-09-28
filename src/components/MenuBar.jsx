@@ -35,15 +35,15 @@ export const MenuBar = ({
   saveNote,
   shareNote,
   renderMarkdown,
-  setRenderMarkdown,
+  toggleRenderMarkdown,
   showLineNumbers,
-  setShowLineNumbers,
+  toggleShowLineNumbers,
   uiScale,
   setUiScale,
   fontSize,
   setFontSize,
   darkMode,
-  setDarkMode,
+  toggleDarkMode,
   toggleFullscreen,
   setIsSettingsOpen,
   aiActions,
@@ -85,11 +85,11 @@ export const MenuBar = ({
         <MenubarMenu>
           <MenubarTrigger>View</MenubarTrigger>
           <MenubarContent>
-            <MenubarItem onClick={() => setRenderMarkdown(!renderMarkdown)}>
+            <MenubarItem onClick={toggleRenderMarkdown}>
               <Eye className="mr-2 h-4 w-4" />
               {renderMarkdown ? "Hide" : "Render"} Markdown
             </MenubarItem>
-            <MenubarItem onClick={() => setShowLineNumbers(!showLineNumbers)}>
+            <MenubarItem onClick={toggleShowLineNumbers}>
               <List className="mr-2 h-4 w-4" />
               {showLineNumbers ? "Hide" : "Show"} Line Numbers
             </MenubarItem>
@@ -128,7 +128,7 @@ export const MenuBar = ({
                 />
               </div>
             </MenubarItem>
-            <MenubarItem onClick={() => setDarkMode(!darkMode)}>
+            <MenubarItem onClick={toggleDarkMode}>
               {darkMode ? (
                 <Sun className="mr-2 h-4 w-4" />
               ) : (
@@ -182,7 +182,7 @@ export const MenuBar = ({
         <Button
           variant="ghost"
           size="icon"
-          onClick={() => setRenderMarkdown(!renderMarkdown)}
+          onClick={toggleRenderMarkdown}
         >
           <Eye className="h-4 w-4" />
         </Button>
