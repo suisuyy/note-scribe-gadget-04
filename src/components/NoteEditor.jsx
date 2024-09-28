@@ -5,19 +5,16 @@ import { languages } from "@codemirror/language-data";
 import { EditorView } from "@codemirror/view";
 import ReactMarkdown from "react-markdown";
 import { StreamLanguage } from "@codemirror/language";
+import { createTheme } from "@uiw/codemirror-themes";
 
-const aiResponseTheme = EditorView.theme({
-  "&": {
-    backgroundColor: "#e6f3ff",
-    color: "#000000",
-  },
-  ".cm-selectionBackground": {
-    backgroundColor: "#b3d9ff",
-  },
-  ".cm-line": {
-    "&.ai-response": {
-      backgroundColor: "#e6f3ff",
-    },
+const aiResponseTheme = createTheme({
+  theme: 'light',
+  settings: {
+    background: '#e6f3ff',
+    foreground: '#000000',
+    selection: '#b3d9ff',
+    selectionMatch: '#b3d9ff',
+    lineHighlight: '#e6f3ff',
   },
 });
 
@@ -38,6 +35,14 @@ export const NoteEditor = ({ content, renderMarkdown, darkMode, fontSize, showLi
     }),
   ];
 
+  const customTheme = EditorView.theme({
+    '.cm-line': {
+      '&.ai-response': {
+        backgroundColor: '#e6f3ff',
+      },
+    },
+  });
+
   return (
     <div className="p-4">
       {renderMarkdown ? (
@@ -48,9 +53,9 @@ export const NoteEditor = ({ content, renderMarkdown, darkMode, fontSize, showLi
         <CodeMirror
           value={content}
           height="calc(100vh - 120px)"
-          extensions={[...editorExtensions, aiResponseTheme]}
+          extensions={[...editorExtensions, customTheme]}
           onChange={handleChange}
-          theme={darkMode ? "dark" : "light"}
+          theme={darkMode ? "dark" : aiResponseTheme}
           onCreateEditor={(view) => {
             editorRef.current = view;
           }}
