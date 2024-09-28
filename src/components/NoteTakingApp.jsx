@@ -230,7 +230,6 @@ export default function NoteTakingApp() {
     toast.success('URL copied to clipboard!');
   };
 
-
   const handleSavePrompt = () => {
     if (currentPrompt.name && currentPrompt.prompt) {
       const existingIndex = aiActions.findIndex(
@@ -273,7 +272,6 @@ export default function NoteTakingApp() {
     return () => clearTimeout(autoSave);
   }, [content, noteId]);
 
-
   return (
     <div ref={appRef} className={`min-h-screen ${darkMode ? "dark" : ""}`}>
       <div
@@ -309,6 +307,16 @@ export default function NoteTakingApp() {
           setCurrentPrompt={setCurrentPrompt}
           handleUndo={handleUndo}
           handleRedo={handleRedo}
+        />
+        
+        <NoteEditor
+          content={content}
+          renderMarkdown={renderMarkdown}
+          darkMode={darkMode}
+          fontSize={fontSize}
+          showLineNumbers={showLineNumbers}
+          handleChange={handleChange}
+          editorRef={editorRef}
         />
         
         <div className="fixed bottom-0 left-0 right-0 p-2 bg-gray-100 dark:bg-gray-800 text-sm flex justify-between items-center">
