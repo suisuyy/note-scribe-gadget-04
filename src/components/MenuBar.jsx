@@ -51,6 +51,7 @@ export const MenuBar = ({
   setIsPromptEditOpen,
   currentPrompt,
   setCurrentPrompt,
+  setAiActions
 }) => {
   return (
     <Menubar className="px-2 border-b border-border">
@@ -174,6 +175,7 @@ export const MenuBar = ({
             setIsPromptEditOpen={setIsPromptEditOpen}
             currentPrompt={currentPrompt}
             setCurrentPrompt={setCurrentPrompt}
+            setAiActions={setAiActions}
           />
         </MenubarContent>
       </MenubarMenu>
