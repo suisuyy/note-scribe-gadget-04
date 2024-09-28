@@ -204,9 +204,9 @@ export default function NoteTakingApp() {
     return savedActions
       ? JSON.parse(savedActions)
       : [
-          { name: "Ask", prompt: "Please answer the following question:" },
-          { name: "Correct", prompt: "Please correct any errors in the following text:" },
-          { name: "Translate", prompt: "Please translate the following text to English:" },
+          { name: "Ask", prompt: "Be concise:" },
+          { name: "Correct", prompt: "Please correct any errors in the following text, just give me corrected text:" },
+          { name: "Translate", prompt: "Translate to English Japanese:" },
         ];
   });
 
