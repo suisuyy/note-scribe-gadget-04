@@ -8,8 +8,6 @@ export const NoteControls = ({
   shareNote,
   renderMarkdown,
   setRenderMarkdown,
-  showLineNumbers,
-  setShowLineNumbers,
   uiScale,
   setUiScale,
   fontSize,
@@ -35,8 +33,6 @@ export const NoteControls = ({
       shareNote={shareNote}
       renderMarkdown={renderMarkdown}
       setRenderMarkdown={setRenderMarkdown}
-      showLineNumbers={showLineNumbers}
-      setShowLineNumbers={setShowLineNumbers}
       uiScale={uiScale}
       setUiScale={setUiScale}
       fontSize={fontSize}
