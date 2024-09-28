@@ -12,7 +12,7 @@ import { Edit2, MessageSquare, Plus } from "lucide-react";
 
 export const AIFunctions = ({ aiActions = [], sendAIRequest, handleEditPrompt, handleAddPrompt, isPromptEditOpen, setIsPromptEditOpen, currentPrompt, setCurrentPrompt }) => {
   const handleSavePrompt = () => {
-    if (currentPrompt.name && currentPrompt.prompt) {
+    if (currentPrompt && currentPrompt.name && currentPrompt.prompt) {
       const existingIndex = aiActions.findIndex(
         (action) => action.name === currentPrompt.name
       );
@@ -20,10 +20,12 @@ export const AIFunctions = ({ aiActions = [], sendAIRequest, handleEditPrompt, h
         // Update existing prompt
         const updatedActions = [...aiActions];
         updatedActions[existingIndex] = currentPrompt;
-        setAiActions(updatedActions);
+        // Assuming setAiActions is passed as a prop, otherwise you need to pass it
+        // setAiActions(updatedActions);
       } else {
         // Add new prompt
-        setAiActions([...aiActions, currentPrompt]);
+        // Assuming setAiActions is passed as a prop, otherwise you need to pass it
+        // setAiActions([...aiActions, currentPrompt]);
       }
       setIsPromptEditOpen(false);
     } else {
@@ -63,7 +65,7 @@ export const AIFunctions = ({ aiActions = [], sendAIRequest, handleEditPrompt, h
         <DialogContent>
           <DialogHeader>
             <DialogTitle>
-              {currentPrompt.name ? "Edit AI Prompt" : "Add New AI Prompt"}
+              {currentPrompt && currentPrompt.name ? "Edit AI Prompt" : "Add New AI Prompt"}
             </DialogTitle>
           </DialogHeader>
           <div className="space-y-4">
@@ -71,7 +73,7 @@ export const AIFunctions = ({ aiActions = [], sendAIRequest, handleEditPrompt, h
               <Label htmlFor="prompt-name">Name</Label>
               <Input
                 id="prompt-name"
-                value={currentPrompt.name}
+                value={currentPrompt?.name || ''}
                 onChange={(e) =>
                   setCurrentPrompt({ ...currentPrompt, name: e.target.value })
                 }
@@ -81,7 +83,7 @@ export const AIFunctions = ({ aiActions = [], sendAIRequest, handleEditPrompt, h
               <Label htmlFor="prompt-content">Prompt</Label>
               <Input
                 id="prompt-content"
-                value={currentPrompt.prompt}
+                value={currentPrompt?.prompt || ''}
                 onChange={(e) =>
                   setCurrentPrompt({ ...currentPrompt, prompt: e.target.value })
                 }

@@ -5,6 +5,7 @@ import { v4 as uuidv4 } from "uuid";
 import { MenuBar } from "./MenuBar";
 import { Editor } from "./Editor";
 import { toast } from "sonner";
+import { AIFunctions } from "./AIFunctions";
 
 const supabaseUrl = "https://vyqkmpjwvoodeeskzvrk.supabase.co";
 const supabaseKey = "eyJhbGciOiJIUzI1NiIsInR5cCI6IkpXVCJ9.eyJpc3MiOiJzdXBhYmFzZSIsInJlZiI6InZ5cWttcGp3dm9vZGVlc2t6dnJrIiwicm9sZSI6InNlcnZpY2Vfcm9sZSIsImlhdCI6MTcyNzA2MDI1MCwiZXhwIjoyMDQyNjM2MjUwfQ.I-vbtdO1vl0RlNW_Ww7n4mo6Pl3NiMfJ0vWvcMdSq50";
@@ -22,6 +23,9 @@ export default function NoteTakingApp() {
   const [noteId, setNoteId] = useState("");
   const [isSettingsOpen, setIsSettingsOpen] = useState(false);
   const [showLineNumbers, setShowLineNumbers] = useState(true);
+  const [aiActions, setAiActions] = useState([]);
+  const [isPromptEditOpen, setIsPromptEditOpen] = useState(false);
+  const [currentPrompt, setCurrentPrompt] = useState(null);
   const fileInputRef = useRef(null);
   const appRef = useRef(null);
   const editorRef = useRef(null);
@@ -159,6 +163,21 @@ export default function NoteTakingApp() {
     toast.success("URL copied to clipboard!");
   };
 
+  const sendAIRequest = (prompt) => {
+    // Implement AI request logic here
+    console.log("Sending AI request with prompt:", prompt);
+  };
+
+  const handleEditPrompt = (prompt) => {
+    setCurrentPrompt(prompt);
+    setIsPromptEditOpen(true);
+  };
+
+  const handleAddPrompt = () => {
+    setCurrentPrompt({ name: '', prompt: '' });
+    setIsPromptEditOpen(true);
+  };
+
   return (
     <div ref={appRef} className={`min-h-screen ${darkMode ? "dark" : ""}`}>
       <div
@@ -184,6 +203,14 @@ export default function NoteTakingApp() {
           setDarkMode={setDarkMode}
           toggleFullscreen={toggleFullscreen}
           setIsSettingsOpen={setIsSettingsOpen}
+          aiActions={aiActions}
+          sendAIRequest={sendAIRequest}
+          handleEditPrompt={handleEditPrompt}
+          handleAddPrompt={handleAddPrompt}
+          isPromptEditOpen={isPromptEditOpen}
+          setIsPromptEditOpen={setIsPromptEditOpen}
+          currentPrompt={currentPrompt}
+          setCurrentPrompt={setCurrentPrompt}
         />
         <Editor
           content={content}
