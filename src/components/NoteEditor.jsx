@@ -20,7 +20,7 @@ const formatDateTime = () => {
   });
 };
 
-export const NoteEditor = ({ content, renderMarkdown, darkMode, fontSize, showLineNumbers, handleChange, editorRef, sendAIRequest }) => {
+export const NoteEditor = ({ content, renderMarkdown, darkMode, fontSize, showLineNumbers, handleChange, editorRef }) => {
   const aiResponseExtension = StreamLanguage.define({
     token(stream) {
       if (stream.match(/AI Response \(\d{2}\/\d{2}\/\d{4}, \d{2}:\d{2}:\d{2}\):/, false)) {
@@ -43,17 +43,6 @@ export const NoteEditor = ({ content, renderMarkdown, darkMode, fontSize, showLi
         },
       },
     }),
-    EditorView.domEventHandlers({
-      dblclick: (event, view) => {
-        const pos = view.posAtCoords({ x: event.clientX, y: event.clientY });
-        if (pos) {
-          const line = view.state.doc.lineAt(pos);
-          const selectedText = line.text;
-          sendAIRequest("Please correct any errors in the following text just give answer:", selectedText);
-        }
-        return false;
-      },
-    }),
   ];
 
   if (showLineNumbers) {
@@ -66,14 +55,6 @@ export const NoteEditor = ({ content, renderMarkdown, darkMode, fontSize, showLi
       `AI Response (${formatDateTime()}):`
     );
     handleChange(formattedValue, viewUpdate);
-  };
-
-  const getSelectedText = (editor) => {
-    const selection = editor.state.selection.main;
-    if (selection.from !== selection.to) {
-      return editor.state.sliceDoc(selection.from, selection.to);
-    }
-    return null;
   };
 
   return (
@@ -93,12 +74,6 @@ export const NoteEditor = ({ content, renderMarkdown, darkMode, fontSize, showLi
             editorRef.current = view;
           }}
           style={{ fontSize: `${fontSize}px` }}
-          onSelectionSet={(editor) => {
-            const selectedText = getSelectedText(editor);
-            if (selectedText) {
-              sendAIRequest("Please process the following text:", selectedText);
-            }
-          }}
         />
       )}
     </div>
