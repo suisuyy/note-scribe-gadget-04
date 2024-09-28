@@ -3,13 +3,37 @@ import CodeMirror from "@uiw/react-codemirror";
 import { markdown, markdownLanguage } from "@codemirror/lang-markdown";
 import { languages } from "@codemirror/language-data";
 import { EditorView } from "@codemirror/view";
+import { StreamLanguage } from "@codemirror/language";
 import ReactMarkdown from "react-markdown";
 
-export const NoteEditor = ({ content, renderMarkdown, darkMode, fontSize, handleChange, editorRef }) => {
+export const NoteEditor = ({ content, renderMarkdown, darkMode, fontSize, showLineNumbers, handleChange, editorRef }) => {
+  const aiResponseExtension = StreamLanguage.define({
+    token(stream) {
+      if (stream.match("AI Response:", false)) {
+        stream.skipToEnd();
+        return "ai-response";
+      }
+      stream.next();
+      return null;
+    }
+  });
+
   const editorExtensions = [
     markdown({ base: markdownLanguage, codeLanguages: languages }),
     EditorView.lineWrapping,
+    aiResponseExtension,
+    EditorView.theme({
+      ".cm-line": {
+        "&.cm-ai-response": {
+          backgroundColor: "#e6f3ff",
+        },
+      },
+    }),
   ];
+
+  if (showLineNumbers) {
+    editorExtensions.push(EditorView.lineNumbers());
+  }
 
   return (
     <div className="p-4">
