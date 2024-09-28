@@ -52,6 +52,11 @@ export const MenuBar = ({
   currentPrompt,
   setCurrentPrompt,
 }) => {
+  const closeMenu = () => {
+    // This function will close the menu
+    document.body.click();
+  };
+
   return (
     <Menubar className="px-2 border-b border-border">
       <MenubarMenu>
@@ -174,7 +179,7 @@ export const MenuBar = ({
             setIsPromptEditOpen={setIsPromptEditOpen}
             currentPrompt={currentPrompt}
             setCurrentPrompt={setCurrentPrompt}
-            closeMenu={() => document.body.click()} // This will close the menu
+            closeMenu={closeMenu}
           />
         </MenubarContent>
       </MenubarMenu>
