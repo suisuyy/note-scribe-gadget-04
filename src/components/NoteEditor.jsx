@@ -3,14 +3,27 @@ import CodeMirror from "@uiw/react-codemirror";
 import { markdown, markdownLanguage } from "@codemirror/lang-markdown";
 import { languages } from "@codemirror/language-data";
 import { EditorView } from "@codemirror/view";
-import { lineNumbers } from "@codemirror/view"; // Import lineNumbers separately
+import { lineNumbers } from "@codemirror/view";
 import { StreamLanguage } from "@codemirror/language";
 import ReactMarkdown from "react-markdown";
+
+const formatDateTime = () => {
+  const now = new Date();
+  return now.toLocaleString('en-US', {
+    year: 'numeric',
+    month: '2-digit',
+    day: '2-digit',
+    hour: '2-digit',
+    minute: '2-digit',
+    second: '2-digit',
+    hour12: false
+  });
+};
 
 export const NoteEditor = ({ content, renderMarkdown, darkMode, fontSize, showLineNumbers, handleChange, editorRef }) => {
   const aiResponseExtension = StreamLanguage.define({
     token(stream) {
-      if (stream.match("AI Response:", false)) {
+      if (stream.match(/AI Response \(\d{2}\/\d{2}\/\d{4}, \d{2}:\d{2}:\d{2}\):/, false)) {
         stream.skipToEnd();
         return "ai-response";
       }
@@ -33,8 +46,16 @@ export const NoteEditor = ({ content, renderMarkdown, darkMode, fontSize, showLi
   ];
 
   if (showLineNumbers) {
-    editorExtensions.push(lineNumbers()); // Use lineNumbers as a function
+    editorExtensions.push(lineNumbers());
   }
+
+  const handleEditorChange = (value, viewUpdate) => {
+    const formattedValue = value.replace(
+      /AI Response:/g,
+      `AI Response (${formatDateTime()}):`
+    );
+    handleChange(formattedValue, viewUpdate);
+  };
 
   return (
     <div className="p-4">
@@ -47,7 +68,7 @@ export const NoteEditor = ({ content, renderMarkdown, darkMode, fontSize, showLi
           value={content}
           height="calc(100vh - 120px)"
           extensions={editorExtensions}
-          onChange={handleChange}
+          onChange={handleEditorChange}
           theme={darkMode ? "dark" : "light"}
           onCreateEditor={(view) => {
             editorRef.current = view;
