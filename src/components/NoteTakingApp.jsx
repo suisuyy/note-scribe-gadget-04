@@ -227,8 +227,10 @@ export default function NoteTakingApp() {
         hour12: false
       });
       const cursor = editorRef.current.state.selection.main.to;
+      const lineEnd = editorRef.current.state.doc.lineAt(cursor).to;
       editorRef.current.dispatch({
-        changes: { from: cursor, insert: `\n\nAI Response (${formattedDateTime}):\n${data}\n\n` },
+        changes: { from: lineEnd, insert: `\nAI Response (${formattedDateTime}):\n${data}\n` },
+        selection: { anchor: lineEnd + 1 },
       });
     } catch (error) {
       console.error("Error sending AI request:", error);
