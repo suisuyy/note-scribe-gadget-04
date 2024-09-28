@@ -5,7 +5,7 @@ import { languages } from "@codemirror/language-data";
 import { EditorView } from "@codemirror/view";
 import ReactMarkdown from "react-markdown";
 
-export const NoteEditor = ({ content, renderMarkdown, darkMode, fontSize, handleChange, editorRef }) => {
+const NoteEditor = ({ content, renderMarkdown, darkMode, fontSize, handleChange, editorRef }) => {
   const editorExtensions = [
     markdown({ base: markdownLanguage, codeLanguages: languages }),
     EditorView.lineWrapping,
@@ -33,3 +33,5 @@ export const NoteEditor = ({ content, renderMarkdown, darkMode, fontSize, handle
     </div>
   );
 };
+
+export default NoteEditor;
