@@ -57,13 +57,6 @@ export const MenuBar = ({
   handleUndo,
   handleRedo,
 }) => {
-  const closeMenu = () => {
-    // This function will close the menu
-    // You might need to implement this based on your Menubar component's API
-    // For example, it might involve setting some state to false
-    // or calling a method on the Menubar component
-  };
-
   return (
     <Menubar className="px-2 border-b border-border flex justify-between items-center">
       <div className="flex items-center">
@@ -187,7 +180,7 @@ export const MenuBar = ({
               setIsPromptEditOpen={setIsPromptEditOpen}
               currentPrompt={currentPrompt}
               setCurrentPrompt={setCurrentPrompt}
-              closeMenu={closeMenu}
+              closeMenu={() => document.body.click()} // This will close the menu
             />
           </MenubarContent>
         </MenubarMenu>
