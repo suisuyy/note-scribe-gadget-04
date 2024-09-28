@@ -14,6 +14,7 @@ import {
 } from "@/components/ui/dialog";
 import { Input } from "@/components/ui/input";
 import { Button } from "@/components/ui/button";
+import { Label } from "@/components/ui/label";
 import { supabaseUrl, supabaseKey } from '../config/supabase';
 
 const supabase = createClient(supabaseUrl, supabaseKey);
