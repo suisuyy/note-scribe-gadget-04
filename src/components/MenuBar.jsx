@@ -174,6 +174,7 @@ export const MenuBar = ({
             setIsPromptEditOpen={setIsPromptEditOpen}
             currentPrompt={currentPrompt}
             setCurrentPrompt={setCurrentPrompt}
+            closeMenu={() => document.body.click()} // This will close the menu
           />
         </MenubarContent>
       </MenubarMenu>

@@ -10,7 +10,7 @@ import {
 } from "@/components/ui/dialog";
 import { Edit2, MessageSquare, Plus } from "lucide-react";
 
-export const AIFunctions = ({ aiActions, sendAIRequest, handleEditPrompt, handleAddPrompt, isPromptEditOpen, setIsPromptEditOpen, currentPrompt, setCurrentPrompt }) => {
+export const AIFunctions = ({ aiActions, sendAIRequest, handleEditPrompt, handleAddPrompt, isPromptEditOpen, setIsPromptEditOpen, currentPrompt, setCurrentPrompt, closeMenu }) => {
   const handleSavePrompt = () => {
     if (currentPrompt && currentPrompt.name && currentPrompt.prompt) {
       // Implement the logic to save the prompt
@@ -20,13 +20,18 @@ export const AIFunctions = ({ aiActions, sendAIRequest, handleEditPrompt, handle
     }
   };
 
+  const handleAIAction = (prompt) => {
+    sendAIRequest(prompt);
+    closeMenu();
+  };
+
   return (
     <>
       {aiActions && aiActions.length > 0 ? (
         aiActions.map((action) => (
           <div key={action.name} className="flex justify-between items-center">
             <div
-              onClick={() => sendAIRequest(action.prompt)}
+              onClick={() => handleAIAction(action.prompt)}
               className="flex-grow cursor-pointer"
             >
               <MessageSquare className="mr-2 h-4 w-4 inline" />
