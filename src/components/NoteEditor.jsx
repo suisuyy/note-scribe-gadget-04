@@ -58,23 +58,25 @@ export const NoteEditor = ({ content, renderMarkdown, darkMode, fontSize, showLi
   };
 
   return (
-    <div className="p-4">
+    <div className="h-full w-full">
       {renderMarkdown ? (
         <div className="prose max-w-none dark:prose-invert">
           <ReactMarkdown>{content}</ReactMarkdown>
         </div>
       ) : (
-        <CodeMirror
-          value={content}
-          height="calc(100vh - 120px)"
-          extensions={editorExtensions}
-          onChange={handleEditorChange}
-          theme={darkMode ? "dark" : "light"}
-          onCreateEditor={(view) => {
-            editorRef.current = view;
-          }}
-          style={{ fontSize: `${fontSize}px` }}
-        />
+        <div className="h-full w-full p-0">
+          <CodeMirror
+            value={content}
+            height="100%"
+            extensions={editorExtensions}
+            onChange={handleEditorChange}
+            theme={darkMode ? "dark" : "light"}
+            onCreateEditor={(view) => {
+              editorRef.current = view;
+            }}
+            style={{ fontSize: `${fontSize}px`, padding: 0 }}
+          />
+        </div>
       )}
     </div>
   );

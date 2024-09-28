@@ -10,7 +10,7 @@ import {
 } from "@/components/ui/dialog";
 import { Edit2, MessageSquare, Plus } from "lucide-react";
 
-export const AIFunctions = ({ aiActions, sendAIRequest, handleEditPrompt, handleAddPrompt, isPromptEditOpen, setIsPromptEditOpen, currentPrompt, setCurrentPrompt, closeMenu }) => {
+export const AIFunctions = ({ aiActions, sendAIRequest, handleEditPrompt, handleAddPrompt, isPromptEditOpen, setIsPromptEditOpen, currentPrompt, setCurrentPrompt, closeMenu, getSelectedText }) => {
   const handleSavePrompt = () => {
     if (currentPrompt && currentPrompt.name && currentPrompt.prompt) {
       // Implement the logic to save the prompt
@@ -21,7 +21,8 @@ export const AIFunctions = ({ aiActions, sendAIRequest, handleEditPrompt, handle
   };
 
   const handleAIAction = (prompt) => {
-    sendAIRequest(prompt);
+    const selectedText = getSelectedText();
+    sendAIRequest(prompt, selectedText);
     closeMenu();
   };
 

@@ -56,6 +56,7 @@ export const MenuBar = ({
   setCurrentPrompt,
   handleUndo,
   handleRedo,
+  getSelectedText, // Add this line
 }) => {
   return (
     <Menubar className="px-2 border-b border-border flex justify-between items-center">
@@ -180,7 +181,8 @@ export const MenuBar = ({
               setIsPromptEditOpen={setIsPromptEditOpen}
               currentPrompt={currentPrompt}
               setCurrentPrompt={setCurrentPrompt}
-              closeMenu={() => document.body.click()} // This will close the menu
+              closeMenu={() => document.body.click()}
+              getSelectedText={getSelectedText} // Add this line
             />
           </MenubarContent>
         </MenubarMenu>

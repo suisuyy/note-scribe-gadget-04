@@ -345,6 +345,7 @@ export default function NoteTakingApp() {
           setCurrentPrompt={setCurrentPrompt}
           handleUndo={handleUndo}
           handleRedo={handleRedo}
+          getSelectedText={getSelectedText} // Add this line
         />
         
         <NoteEditor
