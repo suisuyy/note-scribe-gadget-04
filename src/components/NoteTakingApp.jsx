@@ -181,8 +181,8 @@ export default function NoteTakingApp() {
         let endPos = cursorPos;
         let newlineCount = 0;
         
-        // Find the start position (2 newlines before cursor)
-        while (startPos > 0 && newlineCount < 2) {
+        // Find the start position (3 newlines before cursor)
+        while (startPos > 0 && newlineCount < 3) {
           startPos--;
           if (content[startPos] === '\n') newlineCount++;
         }
@@ -190,8 +190,8 @@ export default function NoteTakingApp() {
         // Reset newline count for end position
         newlineCount = 0;
         
-        // Find the end position (2 newlines after cursor)
-        while (endPos < content.length && newlineCount < 2) {
+        // Find the end position (3 newlines after cursor)
+        while (endPos < content.length && newlineCount < 3) {
           if (content[endPos] === '\n') newlineCount++;
           endPos++;
         }
