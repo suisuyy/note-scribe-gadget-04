@@ -318,6 +318,10 @@ export default function NoteTakingApp() {
     return () => clearTimeout(autoSave);
   }, [content, noteId]);
 
+  const toggleRenderMarkdown = () => setRenderMarkdown(prev => !prev);
+  const toggleShowLineNumbers = () => setShowLineNumbers(prev => !prev);
+  const toggleDarkMode = () => setDarkMode(prev => !prev);
+
   return (
     <div ref={appRef} className={`min-h-screen ${darkMode ? "dark" : ""}`}>
       <div
@@ -332,15 +336,15 @@ export default function NoteTakingApp() {
           saveNote={() => saveNote(content)}
           shareNote={shareNote}
           renderMarkdown={renderMarkdown}
-          setRenderMarkdown={setRenderMarkdown}
+          toggleRenderMarkdown={toggleRenderMarkdown}
           showLineNumbers={showLineNumbers}
-          setShowLineNumbers={setShowLineNumbers}
+          toggleShowLineNumbers={toggleShowLineNumbers}
           uiScale={uiScale}
           setUiScale={setUiScale}
           fontSize={fontSize}
           setFontSize={setFontSize}
           darkMode={darkMode}
-          setDarkMode={setDarkMode}
+          toggleDarkMode={toggleDarkMode}
           toggleFullscreen={toggleFullscreen}
           setIsSettingsOpen={setIsSettingsOpen}
           aiActions={aiActions}

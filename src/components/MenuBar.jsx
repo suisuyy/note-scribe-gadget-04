@@ -7,7 +7,6 @@ import {
   MenubarItem,
   MenubarSeparator,
 } from "@/components/ui/menubar";
-import { Switch } from "@/components/ui/switch";
 import { Label } from "@/components/ui/label";
 import { Slider } from "@/components/ui/slider";
 import { Button } from "@/components/ui/button";
@@ -36,15 +35,15 @@ export const MenuBar = ({
   saveNote,
   shareNote,
   renderMarkdown,
-  setRenderMarkdown,
+  toggleRenderMarkdown,
   showLineNumbers,
-  setShowLineNumbers,
+  toggleShowLineNumbers,
   uiScale,
   setUiScale,
   fontSize,
   setFontSize,
   darkMode,
-  setDarkMode,
+  toggleDarkMode,
   toggleFullscreen,
   setIsSettingsOpen,
   aiActions,
@@ -86,31 +85,13 @@ export const MenuBar = ({
         <MenubarMenu>
           <MenubarTrigger>View</MenubarTrigger>
           <MenubarContent>
-            <MenubarItem>
-              <div className="flex items-center">
-                <Eye className="mr-2 h-4 w-4" />
-                <Label htmlFor="markdown-switch" className="mr-2">
-                  Render Markdown
-                </Label>
-                <Switch
-                  id="markdown-switch"
-                  checked={renderMarkdown}
-                  onCheckedChange={setRenderMarkdown}
-                />
-              </div>
+            <MenubarItem onClick={toggleRenderMarkdown}>
+              <Eye className="mr-2 h-4 w-4" />
+              {renderMarkdown ? "Hide" : "Render"} Markdown
             </MenubarItem>
-            <MenubarItem>
-              <div className="flex items-center">
-                <List className="mr-2 h-4 w-4" />
-                <Label htmlFor="line-numbers-switch" className="mr-2">
-                  Show Line Numbers
-                </Label>
-                <Switch
-                  id="line-numbers-switch"
-                  checked={showLineNumbers}
-                  onCheckedChange={setShowLineNumbers}
-                />
-              </div>
+            <MenubarItem onClick={toggleShowLineNumbers}>
+              <List className="mr-2 h-4 w-4" />
+              {showLineNumbers ? "Hide" : "Show"} Line Numbers
             </MenubarItem>
             <MenubarSeparator />
             <MenubarItem>
@@ -147,22 +128,13 @@ export const MenuBar = ({
                 />
               </div>
             </MenubarItem>
-            <MenubarItem>
-              <div className="flex items-center">
-                {darkMode ? (
-                  <Moon className="mr-2 h-4 w-4" />
-                ) : (
-                  <Sun className="mr-2 h-4 w-4" />
-                )}
-                <Label htmlFor="dark-mode-switch" className="mr-2">
-                  Dark Mode
-                </Label>
-                <Switch
-                  id="dark-mode-switch"
-                  checked={darkMode}
-                  onCheckedChange={setDarkMode}
-                />
-              </div>
+            <MenubarItem onClick={toggleDarkMode}>
+              {darkMode ? (
+                <Sun className="mr-2 h-4 w-4" />
+              ) : (
+                <Moon className="mr-2 h-4 w-4" />
+              )}
+              {darkMode ? "Light" : "Dark"} Mode
             </MenubarItem>
             <MenubarItem onClick={toggleFullscreen}>
               <Maximize className="mr-2 h-4 w-4" />
@@ -182,7 +154,7 @@ export const MenuBar = ({
               setIsPromptEditOpen={setIsPromptEditOpen}
               currentPrompt={currentPrompt}
               setCurrentPrompt={setCurrentPrompt}
-              closeMenu={() => document.body.click()} // This will close the menu
+              closeMenu={() => document.body.click()}
             />
           </MenubarContent>
         </MenubarMenu>
@@ -210,7 +182,7 @@ export const MenuBar = ({
         <Button
           variant="ghost"
           size="icon"
-          onClick={() => setRenderMarkdown(!renderMarkdown)}
+          onClick={toggleRenderMarkdown}
         >
           <Eye className="h-4 w-4" />
         </Button>
