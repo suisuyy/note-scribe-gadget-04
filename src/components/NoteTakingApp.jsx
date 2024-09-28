@@ -5,6 +5,7 @@ import { v4 as uuidv4 } from 'uuid';
 import { toast } from "sonner";
 import { NoteEditor } from './NoteEditor';
 import { NoteControls } from './NoteControls';
+import { HelpDialog } from './HelpDialog';
 import {
   Dialog,
   DialogContent,
@@ -33,6 +34,7 @@ export default function NoteTakingApp() {
   const [showLineNumbers, setShowLineNumbers] = useState(true);
   const [isPromptEditOpen, setIsPromptEditOpen] = useState(false);
   const [currentPrompt, setCurrentPrompt] = useState({ name: "", prompt: "" });
+  const [isHelpOpen, setIsHelpOpen] = useState(false);
   const fileInputRef = useRef(null);
   const appRef = useRef(null);
   const editorRef = useRef(null);
@@ -345,6 +347,7 @@ export default function NoteTakingApp() {
           setCurrentPrompt={setCurrentPrompt}
           handleUndo={handleUndo}
           handleRedo={handleRedo}
+          setIsHelpOpen={setIsHelpOpen}
         />
         
         <NoteEditor
@@ -422,6 +425,7 @@ export default function NoteTakingApp() {
           </div>
         </DialogContent>
       </Dialog>
+      <HelpDialog isOpen={isHelpOpen} setIsOpen={setIsHelpOpen} />
     </div>
   );
 }

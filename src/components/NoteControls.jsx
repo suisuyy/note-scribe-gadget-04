@@ -28,6 +28,7 @@ export const NoteControls = ({
   setCurrentPrompt,
   handleUndo,
   handleRedo,
+  setIsHelpOpen,
 }) => {
   return (
     <MenuBar
@@ -57,6 +58,7 @@ export const NoteControls = ({
       setCurrentPrompt={setCurrentPrompt}
       handleUndo={handleUndo}
       handleRedo={handleRedo}
+      setIsHelpOpen={setIsHelpOpen}
     />
   );
 };
