@@ -1,4 +1,4 @@
-import React, { useEffect, useState } from 'react';
+import React from 'react';
 import CodeMirror from "@uiw/react-codemirror";
 import { markdown, markdownLanguage } from "@codemirror/lang-markdown";
 import { languages } from "@codemirror/language-data";
@@ -7,18 +7,12 @@ import { lineNumbers } from "@codemirror/view";
 import ReactMarkdown from "react-markdown";
 
 export const Editor = ({ content, renderMarkdown, darkMode, fontSize, showLineNumbers, handleChange, editorRef }) => {
-  const [key, setKey] = useState(0);
-
-  useEffect(() => {
-    // Force re-render of CodeMirror when showLineNumbers changes
-    setKey(prevKey => prevKey + 1);
-  }, [showLineNumbers]);
-
   const editorExtensions = [
     markdown({ base: markdownLanguage, codeLanguages: languages }),
     EditorView.lineWrapping,
   ];
 
+  // Only add line numbers extension if showLineNumbers is true
   if (showLineNumbers) {
     editorExtensions.push(lineNumbers());
   }
@@ -31,7 +25,6 @@ export const Editor = ({ content, renderMarkdown, darkMode, fontSize, showLineNu
         </div>
       ) : (
         <CodeMirror
-          key={key}
           value={content}
           height="calc(100vh - 120px)"
           extensions={editorExtensions}
