@@ -199,7 +199,7 @@ export default function NoteTakingApp() {
         return content.slice(startPos, endPos).trim();
       }
     }
-    return "";
+    return "No text selected";
   };
 
   const sendAIRequest = async (prompt) => {
@@ -208,7 +208,7 @@ export default function NoteTakingApp() {
       return;
     }
     const selectedText = getSelectedText();
-    const fullPrompt = `${prompt}\n\nSelected text:\n${selectedText}`;
+    const fullPrompt = `${prompt}\n\n\nSelected text:\n${selectedText}`;
     try {
       const response = await fetch("https://simpleai.devilent2.workers.dev", {
         method: "POST",
@@ -231,7 +231,7 @@ export default function NoteTakingApp() {
       const cursor = editorRef.current.state.selection.main.to;
       const lineEnd = editorRef.current.state.doc.lineAt(cursor).to;
       editorRef.current.dispatch({
-        changes: { from: lineEnd, insert: `\nAI Response (${formattedDateTime}):\n${data}\n` },
+        changes: { from: lineEnd, insert: `\n\n\nAI Response (${formattedDateTime}):\n${data}\n\n\n` },
         selection: { anchor: lineEnd + 1 },
       });
 
