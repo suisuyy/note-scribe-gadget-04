@@ -61,7 +61,7 @@ export const NoteEditor = forwardRef(({ content, renderMarkdown, darkMode, fontS
 
   useImperativeHandle(ref, () => ({
     focus: () => {
-      if (editorRef.current) {
+      if (editorRef.current && editorRef.current.view) {
         editorRef.current.view.focus();
       }
     }
