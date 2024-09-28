@@ -1,10 +1,10 @@
-import React, { useState, useRef, useCallback, useEffect } from "react";
-import { useNavigate, useLocation } from "react-router-dom";
-import { createClient } from "@supabase/supabase-js";
-import { v4 as uuidv4 } from "uuid";
+import React, { useState, useRef, useCallback, useEffect } from 'react';
+import { useNavigate, useLocation } from 'react-router-dom';
+import { createClient } from '@supabase/supabase-js';
+import { v4 as uuidv4 } from 'uuid';
 import { toast } from "sonner";
-import { NoteEditor } from "./NoteEditor";
-import { NoteControls } from "./NoteControls";
+import { NoteEditor } from './NoteEditor';
+import { NoteControls } from './NoteControls';
 import {
   Dialog,
   DialogContent,
@@ -224,6 +224,13 @@ export default function NoteTakingApp() {
     setIsPromptEditOpen(true);
   };
 
+  const copyUrlToClipboard = () => {
+    const url = `${window.location.origin}?id=${noteId}`;
+    navigator.clipboard.writeText(url);
+    toast.success('URL copied to clipboard!');
+  };
+
+
   const handleSavePrompt = () => {
     if (currentPrompt.name && currentPrompt.prompt) {
       const existingIndex = aiActions.findIndex(
@@ -266,6 +273,7 @@ export default function NoteTakingApp() {
     return () => clearTimeout(autoSave);
   }, [content, noteId]);
 
+
   return (
     <div ref={appRef} className={`min-h-screen ${darkMode ? "dark" : ""}`}>
       <div
@@ -302,19 +310,17 @@ export default function NoteTakingApp() {
           handleUndo={handleUndo}
           handleRedo={handleRedo}
         />
-        <NoteEditor
-          content={content}
-          renderMarkdown={renderMarkdown}
-          darkMode={darkMode}
-          fontSize={fontSize}
-          showLineNumbers={showLineNumbers}
-          handleChange={handleChange}
-          editorRef={editorRef}
-        />
+        
         <div className="fixed bottom-0 left-0 right-0 p-2 bg-gray-100 dark:bg-gray-800 text-sm flex justify-between items-center">
           <span>Word count: {wordCount}</span>
-          <span>Note ID: {noteId}</span>
+          <button
+            onClick={copyUrlToClipboard}
+            className="text-blue-500 hover:text-blue-700 dark:text-blue-400 dark:hover:text-blue-300"
+          >
+            {`${window.location.origin}?id=${noteId}`}
+          </button>
         </div>
+        
         <input
           type="file"
           ref={fileInputRef}
