@@ -2,7 +2,7 @@ import React, { useState, useRef, useEffect } from 'react';
 import { useNavigate, useLocation } from 'react-router-dom';
 import { createClient } from '@supabase/supabase-js';
 import { v4 as uuidv4 } from 'uuid';
-import { NoteEditor } from './NoteEditor';
+import NoteEditor from './NoteEditor';
 import NoteControls from './NoteControls';
 import { AIFunctions } from './AIFunctions';
 import { useNoteManagement } from '../hooks/useNoteManagement';
@@ -39,21 +39,6 @@ export default function NoteTakingApp() {
     loadNote,
   } = useNoteManagement();
 
-  const [aiActions, setAiActions] = useState(() => {
-    const savedActions = localStorage.getItem("aiActions");
-    return savedActions
-      ? JSON.parse(savedActions)
-      : [
-          { name: "Ask", prompt: "Please answer the following question:" },
-          { name: "Correct", prompt: "Please correct any errors in the following text:" },
-          { name: "Translate", prompt: "Please translate the following text to English:" },
-        ];
-  });
-
-  useEffect(() => {
-    localStorage.setItem("aiActions", JSON.stringify(aiActions));
-  }, [aiActions]);
-
   return (
     <div ref={appRef} className={`min-h-screen ${darkMode ? "dark" : ""}`}>
       <div
@@ -73,7 +58,6 @@ export default function NoteTakingApp() {
           setDarkMode={setDarkMode}
           toggleFullscreen={toggleFullscreen}
           setIsSettingsOpen={setIsSettingsOpen}
-          aiActions={aiActions}
           noteId={noteId}
           content={content}
           fileInputRef={fileInputRef}
@@ -90,8 +74,6 @@ export default function NoteTakingApp() {
           showLineNumbers={showLineNumbers}
         />
         <AIFunctions
-          aiActions={aiActions}
-          setAiActions={setAiActions}
           editorRef={editorRef}
         />
         <div className="fixed bottom-0 left-0 right-0 p-2 bg-gray-100 dark:bg-gray-800 text-sm flex justify-between items-center">

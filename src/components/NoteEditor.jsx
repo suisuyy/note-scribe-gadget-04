@@ -5,11 +5,15 @@ import { languages } from "@codemirror/language-data";
 import { EditorView } from "@codemirror/view";
 import ReactMarkdown from "react-markdown";
 
-const NoteEditor = ({ content, renderMarkdown, darkMode, fontSize, handleChange, editorRef }) => {
+const NoteEditor = ({ content, renderMarkdown, darkMode, fontSize, handleChange, editorRef, showLineNumbers }) => {
   const editorExtensions = [
     markdown({ base: markdownLanguage, codeLanguages: languages }),
     EditorView.lineWrapping,
   ];
+
+  if (showLineNumbers) {
+    editorExtensions.push(EditorView.lineNumbers());
+  }
 
   return (
     <div className="p-4">
