@@ -127,6 +127,34 @@ export const useNoteManagement = () => {
     }
   };
 
+  const sendAIRequest = async (prompt) => {
+    if (!editorRef.current) {
+      console.error("Editor not initialized");
+      return;
+    }
+    const selectedText = getSelectedText();
+    const fullPrompt = `${prompt}\n\nSelected text:\n${selectedText}`;
+    try {
+      const response = await fetch("https://simpleai.devilent2.workers.dev", {
+        method: "POST",
+        headers: {
+          "Content-Type": "application/x-www-form-urlencoded",
+        },
+        body: new URLSearchParams({ q: fullPrompt }),
+      });
+      const data = await response.text();
+      // Insert the AI response after the cursor and select it
+      const cursor = editorRef.current.state.selection.main.to;
+      const transaction = editorRef.current.state.update({
+        changes: { from: cursor, insert: `\n\nAI Response:\n${data}\n\n` },
+        selection: { anchor: cursor + 2, head: cursor + data.length + 17 },
+      });
+      editorRef.current.dispatch(transaction);
+    } catch (error) {
+      console.error("Error sending AI request:", error);
+    }
+  };
+
   useEffect(() => {
     const initializeNote = async () => {
       const searchParams = new URLSearchParams(location.search);
@@ -186,5 +214,6 @@ export const useNoteManagement = () => {
     shareNote,
     handleSetNoteId,
     copyUrlToClipboard,
+    sendAIRequest,
   };
 };

@@ -53,8 +53,12 @@ export const MenuBar = ({
   setCurrentPrompt,
 }) => {
   const closeMenu = () => {
-    // This function will close the menu
     document.body.click();
+  };
+
+  const handleAIAction = async (prompt) => {
+    closeMenu();
+    await sendAIRequest(prompt);
   };
 
   return (
@@ -172,7 +176,7 @@ export const MenuBar = ({
         <MenubarContent>
           <AIFunctions
             aiActions={aiActions}
-            sendAIRequest={sendAIRequest}
+            sendAIRequest={handleAIAction}
             handleEditPrompt={handleEditPrompt}
             handleAddPrompt={handleAddPrompt}
             isPromptEditOpen={isPromptEditOpen}
