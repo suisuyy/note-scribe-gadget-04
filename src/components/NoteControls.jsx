@@ -29,6 +29,7 @@ export const NoteControls = ({
   handleUndo,
   handleRedo,
   getSelectedText, // Add this line
+  addNotification, // Add this line
 }) => {
   return (
     <MenuBar
@@ -59,6 +60,7 @@ export const NoteControls = ({
       handleUndo={handleUndo}
       handleRedo={handleRedo}
       getSelectedText={getSelectedText} // Add this line
+      addNotification={addNotification} // Add this line
     />
   );
 };

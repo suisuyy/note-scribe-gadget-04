@@ -1,28 +1,27 @@
 import React from 'react';
 import { Button } from "@/components/ui/button";
-import { Input } from "@/components/ui/input";
-import { Label } from "@/components/ui/label";
-import {
-  Dialog,
-  DialogContent,
-  DialogHeader,
-  DialogTitle,
-} from "@/components/ui/dialog";
-import { Edit2, MessageSquare, Plus } from "lucide-react";
+import { MessageSquare, Edit2, Plus } from "lucide-react";
 
-export const AIFunctions = ({ aiActions, sendAIRequest, handleEditPrompt, handleAddPrompt, isPromptEditOpen, setIsPromptEditOpen, currentPrompt, setCurrentPrompt, closeMenu, getSelectedText }) => {
-  const handleSavePrompt = () => {
-    if (currentPrompt && currentPrompt.name && currentPrompt.prompt) {
-      // Implement the logic to save the prompt
-      setIsPromptEditOpen(false);
-    } else {
-      alert("Please provide both a name and a prompt.");
-    }
-  };
+export const AIFunctions = ({ 
+  aiActions, 
+  sendAIRequest, 
+  handleEditPrompt, 
+  handleAddPrompt, 
+  isPromptEditOpen, 
+  setIsPromptEditOpen, 
+  currentPrompt, 
+  setCurrentPrompt, 
+  closeMenu, 
+  getSelectedText, 
+  addNotification 
+}) => {
 
-  const handleAIAction = (prompt) => {
+  const handleAIAction = (action) => {
     const selectedText = getSelectedText();
-    sendAIRequest(prompt, selectedText);
+    const fullPrompt = `${action.prompt}\n\n${selectedText}`; // Removed "Selected text:"
+    sendAIRequest(action.prompt, selectedText);
+    addNotification(`AI request sent: ${action.name}`);
+    addNotification(`Full Prompt:\n${fullPrompt}`);
     closeMenu();
   };
 
@@ -32,7 +31,7 @@ export const AIFunctions = ({ aiActions, sendAIRequest, handleEditPrompt, handle
         aiActions.map((action) => (
           <div key={action.name} className="flex justify-between items-center">
             <div
-              onClick={() => handleAIAction(action.prompt)}
+              onClick={() => handleAIAction(action)}
               className="flex-grow cursor-pointer"
             >
               <MessageSquare className="mr-2 h-4 w-4 inline" />
@@ -58,38 +57,7 @@ export const AIFunctions = ({ aiActions, sendAIRequest, handleEditPrompt, handle
         <Plus className="mr-2 h-4 w-4 inline" />
         Add New Prompt
       </div>
-      <Dialog open={isPromptEditOpen} onOpenChange={setIsPromptEditOpen}>
-        <DialogContent>
-          <DialogHeader>
-            <DialogTitle>
-              {currentPrompt && currentPrompt.name ? "Edit AI Prompt" : "Add New AI Prompt"}
-            </DialogTitle>
-          </DialogHeader>
-          <div className="space-y-4">
-            <div>
-              <Label htmlFor="prompt-name">Name</Label>
-              <Input
-                id="prompt-name"
-                value={currentPrompt?.name || ''}
-                onChange={(e) =>
-                  setCurrentPrompt({ ...currentPrompt, name: e.target.value })
-                }
-              />
-            </div>
-            <div>
-              <Label htmlFor="prompt-content">Prompt</Label>
-              <Input
-                id="prompt-content"
-                value={currentPrompt?.prompt || ''}
-                onChange={(e) =>
-                  setCurrentPrompt({ ...currentPrompt, prompt: e.target.value })
-                }
-              />
-            </div>
-            <Button onClick={handleSavePrompt}>Save Prompt</Button>
-          </div>
-        </DialogContent>
-      </Dialog>
+      {/* Removed Dialog for handleSavePrompt */}
     </>
   );
 };

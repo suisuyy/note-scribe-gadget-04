@@ -14,6 +14,7 @@ import {
 import { Input } from "@/components/ui/input";
 import { Button } from "@/components/ui/button";
 import { Label } from "@/components/ui/label";
+import Notification from './Notification';
 
 const supabaseUrl = "https://vyqkmpjwvoodeeskzvrk.supabase.co";
 const supabaseKey = "eyJhbGciOiJIUzI1NiIsInR5cCI6IkpXVCJ9.eyJpc3MiOiJzdXBhYmFzZSIsInJlZiI6InZ5cWttcGp3dm9vZGVlc2t6dnJrIiwicm9sZSI6InNlcnZpY2Vfcm9sZSIsImlhdCI6MTcyNzA2MDI1MCwiZXhwIjoyMDQyNjM2MjUwfQ.I-vbtdO1vl0RlNW_Ww7n4mo6Pl3NiMfJ0vWvcMdSq50";
@@ -41,6 +42,149 @@ export default function NoteTakingApp() {
 
   const [history, setHistory] = useState([]);
   const [historyIndex, setHistoryIndex] = useState(-1);
+  const [notifications, setNotifications] = useState([]);
+
+  const [aiActions, setAiActions] = useState(() => {
+    const savedActions = localStorage.getItem("aiActions");
+    return savedActions
+      ? JSON.parse(savedActions)
+      : [
+          { name: "Ask", prompt: "Be concise:" },
+          { name: "Correct", prompt: "correct the text , just only give me corrected text" },
+          { name: "Translate", prompt: "Translate to English Japanese:" },
+        ];
+  });
+
+
+  useEffect(() => {
+    localStorage.setItem("aiActions", JSON.stringify(aiActions));
+  }, [aiActions]);
+
+
+  const addNotification = (message) => {
+    const id = uuidv4();
+    setNotifications((prev) => [...prev, { id, message }]);
+    setTimeout(() => removeNotification(id), 5000); // Increased delay to 5 seconds
+  };
+
+
+  const removeNotification = (id) => {
+    setNotifications((prev) => prev.filter((notif) => notif.id !== id));
+  };
+
+  const getSelectedText = () => {
+    if (editorRef.current) {
+      const selection = editorRef.current.state.selection.main;
+      if (selection.from !== selection.to) {
+        return editorRef.current.state.sliceDoc(selection.from, selection.to);
+      } else {
+        const content = editorRef.current.state.doc.toString();
+        const cursorPos = selection.from;
+        
+        let startPos = cursorPos;
+        let endPos = cursorPos;
+        let newlineCount = 0;
+        
+        // Find the start position (2 newlines before cursor)
+        while (startPos > 0 && newlineCount < 2) {
+          startPos--;
+          if (content[startPos] === '\n') newlineCount++;
+        }
+        
+        // Reset newline count for end position
+        newlineCount = 0;
+        
+        // Find the end position (2 newlines after cursor)
+        while (endPos < content.length && newlineCount < 2) {
+          if (content[endPos] === '\n') newlineCount++;
+          endPos++;
+        }
+        
+        return content.slice(startPos, endPos).trim();
+      }
+    }
+    return "";
+  };
+
+
+  const sendAIRequest = async (prompt, selectedText) => {
+    const fullPrompt = `${prompt}\n\n${selectedText}`; // Removed "Selected text:"
+    try {
+      const response = await fetch("https://simpleai.devilent2.workers.dev", {
+        method: "POST",
+        headers: {
+          "Content-Type": "application/x-www-form-urlencoded",
+        },
+        body: new URLSearchParams({ q: fullPrompt }),
+      });
+      const data = await response.text();
+      const now = new Date();
+      const formattedDateTime = now.toLocaleString('en-US', {
+        year: 'numeric',
+        month: '2-digit',
+        day: '2-digit',
+        hour: '2-digit',
+        minute: '2-digit',
+        second: '2-digit',
+        hour12: false
+      });
+      const cursor = editorRef.current.state.selection.main.to;
+      const lineEnd = editorRef.current.state.doc.lineAt(cursor).to;
+      editorRef.current.dispatch({
+        changes: { from: lineEnd, insert: `\nAI Response (${formattedDateTime}):\n${data}\n` },
+        selection: { anchor: lineEnd + 1 },
+      });
+    } catch (error) {
+      console.error("Error sending AI request:", error);
+    }
+  };
+
+
+  const handleSavePrompt = () => {
+    if (currentPrompt.name && currentPrompt.prompt) {
+      const existingIndex = aiActions.findIndex(action => action.name === currentPrompt.name);
+      if (existingIndex !== -1) {
+        // Update existing prompt
+        const updatedActions = [...aiActions];
+        updatedActions[existingIndex] = currentPrompt;
+        setAiActions(updatedActions);
+        addNotification(`Prompt updated: ${currentPrompt.name}`);
+      } else {
+        // Add new prompt
+        setAiActions([...aiActions, currentPrompt]);
+        addNotification(`New prompt added: ${currentPrompt.name}`);
+      }
+      setIsPromptEditOpen(false);
+    } else {
+      alert("Please provide both a name and a prompt.");
+    }
+  };
+
+  const handleKeyDown = useCallback(
+    (e) => {
+      if (e.ctrlKey && e.key === 'Enter') {
+        e.preventDefault();
+        if (editorRef.current) {
+          editorRef.current.focus();
+          const currentBlock = getSelectedText();
+          if (currentBlock) {
+            const askPrompt = aiActions.find(action => action.name === "Ask")?.prompt || "Be concise:";
+            const fullPrompt = `${askPrompt}\n\n${currentBlock}`; // Removed "Selected text:"
+            sendAIRequest(askPrompt, currentBlock);
+            addNotification("AI request sent for the current block.");
+            addNotification(`Full Prompt:\n${fullPrompt}`);
+          }
+        }
+      }
+    },
+    [editorRef, sendAIRequest, addNotification, getSelectedText, aiActions]
+  );
+
+
+  useEffect(() => {
+    window.addEventListener('keydown', handleKeyDown);
+    return () => window.removeEventListener('keydown', handleKeyDown);
+  }, [handleKeyDown]);
 
   const handleChange = useCallback(
     (value, viewUpdate) => {
@@ -55,6 +199,7 @@ export default function NoteTakingApp() {
     [noteId, historyIndex]
   );
 
+
   const handleUndo = () => {
     if (historyIndex > 0) {
       setHistoryIndex(prevIndex => prevIndex - 1);
@@ -68,6 +213,7 @@ export default function NoteTakingApp() {
       setContent(history[historyIndex + 1]);
     }
   };
+
 
   const openFile = () => {
     fileInputRef.current?.click();
@@ -166,91 +312,21 @@ export default function NoteTakingApp() {
     }
   };
 
-  const getSelectedText = () => {
-    if (editorRef.current) {
-      const selection = editorRef.current.state.selection.main;
-      if (selection.from !== selection.to) {
-        return editorRef.current.state.sliceDoc(selection.from, selection.to);
-      } else {
-        const content = editorRef.current.state.doc.toString();
-        const cursorPos = selection.from;
-        
-        let startPos = cursorPos;
-        let endPos = cursorPos;
-        let newlineCount = 0;
-        
-        // Find the start position (2 newlines before cursor)
-        while (startPos > 0 && newlineCount < 2) {
-          startPos--;
-          if (content[startPos] === '\n') newlineCount++;
-        }
-        
-        // Reset newline count for end position
-        newlineCount = 0;
-        
-        // Find the end position (2 newlines after cursor)
-        while (endPos < content.length && newlineCount < 2) {
-          if (content[endPos] === '\n') newlineCount++;
-          endPos++;
-        }
-        
-        return content.slice(startPos, endPos).trim();
-      }
-    }
-    return "";
-  };
-
-  const sendAIRequest = async (prompt) => {
-    if (!editorRef.current) {
-      console.error("Editor not initialized");
-      return;
-    }
-    const selectedText = getSelectedText();
-    const fullPrompt = `${prompt}\n\nSelected text:\n${selectedText}`;
-    try {
-      const response = await fetch("https://simpleai.devilent2.workers.dev", {
-        method: "POST",
-        headers: {
-          "Content-Type": "application/x-www-form-urlencoded",
-        },
-        body: new URLSearchParams({ q: fullPrompt }),
-      });
-      const data = await response.text();
-      const now = new Date();
-      const formattedDateTime = now.toLocaleString('en-US', {
-        year: 'numeric',
-        month: '2-digit',
-        day: '2-digit',
-        hour: '2-digit',
-        minute: '2-digit',
-        second: '2-digit',
-        hour12: false
-      });
-      const cursor = editorRef.current.state.selection.main.to;
-      const lineEnd = editorRef.current.state.doc.lineAt(cursor).to;
-      editorRef.current.dispatch({
-        changes: { from: lineEnd, insert: `\nAI Response (${formattedDateTime}):\n${data}\n` },
-        selection: { anchor: lineEnd + 1 },
-      });
-    } catch (error) {
-      console.error("Error sending AI request:", error);
-    }
-  };
-
-  const [aiActions, setAiActions] = useState(() => {
-    const savedActions = localStorage.getItem("aiActions");
-    return savedActions
-      ? JSON.parse(savedActions)
-      : [
-          { name: "Ask", prompt: "Be concise:" },
-          { name: "Correct", prompt: "correct the text , just only give  me corrected text" },
-          { name: "Translate", prompt: "Translate to English Japanese:" },
-        ];
-  });
-
   useEffect(() => {
-    localStorage.setItem("aiActions", JSON.stringify(aiActions));
-  }, [aiActions]);
+    const initializeNote = async () => {
+      const searchParams = new URLSearchParams(location.search);
+      let id = searchParams.get("id");
+      if (!id) {
+        id = localStorage.getItem("noteId") || uuidv4();
+        navigate(`?id=${id}`, { replace: true });
+      }
+      setNoteId(id);
+      await loadNote(id);
+      localStorage.setItem("noteId", id);
+    };
+
+    initializeNote();
+  }, [location, navigate]);
 
   const handleAddPrompt = () => {
     setCurrentPrompt({ name: "", prompt: "" });
@@ -268,47 +344,6 @@ export default function NoteTakingApp() {
     toast.success('URL copied to clipboard!');
   };
 
-  const handleSavePrompt = () => {
-    if (currentPrompt.name && currentPrompt.prompt) {
-      const existingIndex = aiActions.findIndex(
-        (action) => action.name === currentPrompt.name
-      );
-      if (existingIndex !== -1) {
-        const updatedActions = [...aiActions];
-        updatedActions[existingIndex] = currentPrompt;
-        setAiActions(updatedActions);
-      } else {
-        setAiActions([...aiActions, currentPrompt]);
-      }
-      setIsPromptEditOpen(false);
-    } else {
-      alert("Please provide both a name and a prompt.");
-    }
-  };
-
-  useEffect(() => {
-    const initializeNote = async () => {
-      const searchParams = new URLSearchParams(location.search);
-      let id = searchParams.get("id");
-      if (!id) {
-        id = localStorage.getItem("noteId") || uuidv4();
-        navigate(`?id=${id}`, { replace: true });
-      }
-      setNoteId(id);
-      await loadNote(id);
-      localStorage.setItem("noteId", id);
-    };
-
-    initializeNote();
-  }, [location, navigate]);
-
-  useEffect(() => {
-    const autoSave = setTimeout(() => {
-      saveNote(content);
-    }, 5000);
-
-    return () => clearTimeout(autoSave);
-  }, [content, noteId]);
 
   return (
     <div ref={appRef} className={`min-h-screen ${darkMode ? "dark" : ""}`}>
@@ -345,7 +380,8 @@ export default function NoteTakingApp() {
           setCurrentPrompt={setCurrentPrompt}
           handleUndo={handleUndo}
           handleRedo={handleRedo}
-          getSelectedText={getSelectedText} // Add this line
+          getSelectedText={getSelectedText}
+          addNotification={addNotification} // Pass addNotification
         />
         
         <NoteEditor
@@ -375,6 +411,16 @@ export default function NoteTakingApp() {
           style={{ display: "none" }}
           accept=".txt,.md"
         />
+        <div className="fixed top-4 right-4 z-50 space-y-2">
+          {notifications.map((notif) => (
+            <Notification
+              key={notif.id}
+              id={notif.id}
+              message={notif.message}
+              onClose={removeNotification}
+            />
+          ))}
+        </div>
       </div>
       <Dialog open={isSettingsOpen} onOpenChange={setIsSettingsOpen}>
         <DialogContent>

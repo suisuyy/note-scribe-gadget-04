@@ -1,4 +1,4 @@
-import React from 'react';
+import React, { useEffect } from 'react';
 import CodeMirror from "@uiw/react-codemirror";
 import { markdown, markdownLanguage } from "@codemirror/lang-markdown";
 import { languages } from "@codemirror/language-data";
@@ -32,30 +32,35 @@ export const NoteEditor = ({ content, renderMarkdown, darkMode, fontSize, showLi
     }
   });
 
-  const editorExtensions = [
-    markdown({ base: markdownLanguage, codeLanguages: languages }),
-    EditorView.lineWrapping,
-    aiResponseExtension,
-    EditorView.theme({
-      ".cm-line": {
-        "&.cm-ai-response": {
-          backgroundColor: "#e6f3ff",
+  const getEditorExtensions = () => {
+    const extensions = [
+      markdown({ base: markdownLanguage, codeLanguages: languages }),
+      EditorView.lineWrapping,
+      aiResponseExtension,
+      EditorView.theme({
+        ".cm-line": {
+          "&.cm-ai-response": {
+            backgroundColor: "#e6f3ff",
+          },
         },
-      },
-    }),
-  ];
+      }),
+    ];
 
-  if (showLineNumbers) {
-    editorExtensions.push(lineNumbers());
-  }
+    if (showLineNumbers) {
+      extensions.push(lineNumbers());
+    }
 
-  const handleEditorChange = (value, viewUpdate) => {
-    const formattedValue = value.replace(
-      /AI Response:/g,
-      `AI Response (${formatDateTime()}):`
-    );
-    handleChange(formattedValue, viewUpdate);
+    return extensions;
   };
+
+  useEffect(() => {
+    if (editorRef.current) {
+      const view = editorRef.current;
+      view.dispatch({
+        effects: EditorView.reconfigure.of(getEditorExtensions())
+      });
+    }
+  }, [showLineNumbers]);
 
   return (
     <div className="h-full w-full">
@@ -68,8 +73,8 @@ export const NoteEditor = ({ content, renderMarkdown, darkMode, fontSize, showLi
           <CodeMirror
             value={content}
             height="100%"
-            extensions={editorExtensions}
-            onChange={handleEditorChange}
+            extensions={getEditorExtensions()}
+            onChange={handleChange}
             theme={darkMode ? "dark" : "light"}
             onCreateEditor={(view) => {
               editorRef.current = view;
