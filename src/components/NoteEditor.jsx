@@ -4,38 +4,11 @@ import { markdown, markdownLanguage } from "@codemirror/lang-markdown";
 import { languages } from "@codemirror/language-data";
 import { EditorView } from "@codemirror/view";
 import ReactMarkdown from "react-markdown";
-import { StreamLanguage } from "@codemirror/language";
 
-const aiResponseTheme = EditorView.theme({
-  "&": {
-    backgroundColor: "#e6f3ff",
-    color: "#000000",
-  },
-  ".cm-selectionBackground": {
-    backgroundColor: "#b3d9ff",
-  },
-  ".cm-line": {
-    "&.ai-response": {
-      backgroundColor: "#e6f3ff",
-    },
-  },
-});
-
-export const NoteEditor = ({ content, renderMarkdown, darkMode, fontSize, showLineNumbers, handleChange, editorRef }) => {
+export const NoteEditor = ({ content, renderMarkdown, darkMode, fontSize, handleChange, editorRef }) => {
   const editorExtensions = [
     markdown({ base: markdownLanguage, codeLanguages: languages }),
     EditorView.lineWrapping,
-    StreamLanguage.define({
-      name: 'ai-response',
-      token: (stream) => {
-        if (stream.match('AI Response:', false)) {
-          stream.skipToEnd();
-          return 'ai-response';
-        }
-        stream.next();
-        return null;
-      },
-    }),
   ];
 
   return (
@@ -48,7 +21,7 @@ export const NoteEditor = ({ content, renderMarkdown, darkMode, fontSize, showLi
         <CodeMirror
           value={content}
           height="calc(100vh - 120px)"
-          extensions={[...editorExtensions, aiResponseTheme]}
+          extensions={editorExtensions}
           onChange={handleChange}
           theme={darkMode ? "dark" : "light"}
           onCreateEditor={(view) => {
