@@ -35,6 +35,22 @@ export const HelpDialog = ({ isOpen, setIsOpen }) => {
             <li>If no text is selected, the AI will use the surrounding context (2 lines before and after the cursor).</li>
             <li>After selecting text, choose an AI action from the "AI" menu.</li>
           </ul>
+
+          <h3 className="font-bold mt-4">Sharing Notes:</h3>
+          <ul className="list-disc pl-5 space-y-2">
+            <li>Click on the "File" menu in the toolbar.</li>
+            <li>Select the "Share" option.</li>
+            <li>A shareable URL will be copied to your clipboard.</li>
+            <li>You can also click on the URL displayed at the bottom of the screen to copy it.</li>
+          </ul>
+
+          <h3 className="font-bold mt-4">Rendering Markdown:</h3>
+          <ul className="list-disc pl-5 space-y-2">
+            <li>Click on the "View" menu in the toolbar.</li>
+            <li>Toggle the "Render Markdown" switch to on.</li>
+            <li>Your note will now be displayed as rendered markdown.</li>
+            <li>Toggle the switch off to return to the plain text editor view.</li>
+          </ul>
         </DialogDescription>
       </DialogContent>
     </Dialog>
