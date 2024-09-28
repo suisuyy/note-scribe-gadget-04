@@ -77,7 +77,7 @@ export const NoteEditor = ({ content, renderMarkdown, darkMode, fontSize, showLi
   };
 
   return (
-    <div className="p-4">
+    <div>
       {renderMarkdown ? (
         <div className="prose max-w-none dark:prose-invert">
           <ReactMarkdown>{content}</ReactMarkdown>
