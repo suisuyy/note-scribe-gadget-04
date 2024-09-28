@@ -4,7 +4,7 @@ import { createClient } from '@supabase/supabase-js';
 import { v4 as uuidv4 } from 'uuid';
 import { toast } from "sonner";
 import { NoteEditor } from './NoteEditor';
-import { MenuBar } from './MenuBar';
+import { NoteControls } from './NoteControls';
 import { HelpDialog } from './HelpDialog';
 import {
   Dialog,
@@ -318,10 +318,6 @@ export default function NoteTakingApp() {
     return () => clearTimeout(autoSave);
   }, [content, noteId]);
 
-  const toggleRenderMarkdown = () => setRenderMarkdown(prev => !prev);
-  const toggleShowLineNumbers = () => setShowLineNumbers(prev => !prev);
-  const toggleDarkMode = () => setDarkMode(prev => !prev);
-
   return (
     <div ref={appRef} className={`min-h-screen ${darkMode ? "dark" : ""}`}>
       <div
@@ -330,21 +326,21 @@ export default function NoteTakingApp() {
         }`}
         style={{ fontSize: `${fontSize}px`, zoom: `${uiScale}%` }}
       >
-        <MenuBar
+        <NoteControls
           openFile={openFile}
           downloadFile={downloadFile}
           saveNote={() => saveNote(content)}
           shareNote={shareNote}
           renderMarkdown={renderMarkdown}
-          toggleRenderMarkdown={toggleRenderMarkdown}
+          setRenderMarkdown={setRenderMarkdown}
           showLineNumbers={showLineNumbers}
-          toggleShowLineNumbers={toggleShowLineNumbers}
+          setShowLineNumbers={setShowLineNumbers}
           uiScale={uiScale}
           setUiScale={setUiScale}
           fontSize={fontSize}
           setFontSize={setFontSize}
           darkMode={darkMode}
-          toggleDarkMode={toggleDarkMode}
+          setDarkMode={setDarkMode}
           toggleFullscreen={toggleFullscreen}
           setIsSettingsOpen={setIsSettingsOpen}
           aiActions={aiActions}

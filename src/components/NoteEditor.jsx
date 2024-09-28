@@ -68,16 +68,8 @@ export const NoteEditor = ({ content, renderMarkdown, darkMode, fontSize, showLi
     handleChange(formattedValue, viewUpdate);
   };
 
-  const getSelectedText = (editor) => {
-    const selection = editor.state.selection.main;
-    if (selection.from !== selection.to) {
-      return editor.state.sliceDoc(selection.from, selection.to);
-    }
-    return null;
-  };
-
   return (
-    <div>
+    <div className="p-4">
       {renderMarkdown ? (
         <div className="prose max-w-none dark:prose-invert">
           <ReactMarkdown>{content}</ReactMarkdown>
@@ -93,12 +85,6 @@ export const NoteEditor = ({ content, renderMarkdown, darkMode, fontSize, showLi
             editorRef.current = view;
           }}
           style={{ fontSize: `${fontSize}px` }}
-          onSelectionSet={(editor) => {
-            const selectedText = getSelectedText(editor);
-            if (selectedText) {
-              sendAIRequest("Please process the following text:", selectedText);
-            }
-          }}
         />
       )}
     </div>
