@@ -10,7 +10,6 @@ import {
 import { Switch } from "@/components/ui/switch";
 import { Label } from "@/components/ui/label";
 import { Slider } from "@/components/ui/slider";
-import { Button } from "@/components/ui/button";
 import {
   FileText,
   Download,
@@ -24,9 +23,6 @@ import {
   Share2,
   Settings,
   List,
-  Undo,
-  Redo,
-  FileCode,
 } from "lucide-react";
 import { AIFunctions } from './AIFunctions';
 
@@ -55,39 +51,9 @@ export const MenuBar = ({
   setIsPromptEditOpen,
   currentPrompt,
   setCurrentPrompt,
-  undo,
-  redo,
 }) => {
-  const closeMenu = () => {
-    document.body.click();
-  };
-
-  const handleAIAction = async (prompt) => {
-    closeMenu();
-    await sendAIRequest(prompt);
-  };
-
   return (
     <Menubar className="px-2 border-b border-border">
-      <div className="flex items-center space-x-2 mr-4">
-        <Button variant="ghost" size="icon" onClick={undo}>
-          <Undo className="h-4 w-4" />
-        </Button>
-        <Button variant="ghost" size="icon" onClick={redo}>
-          <Redo className="h-4 w-4" />
-        </Button>
-        <Button
-          variant="ghost"
-          size="icon"
-          onClick={() => setRenderMarkdown(!renderMarkdown)}
-        >
-          {renderMarkdown ? (
-            <FileCode className="h-4 w-4" />
-          ) : (
-            <Eye className="h-4 w-4" />
-          )}
-        </Button>
-      </div>
       <MenubarMenu>
         <MenubarTrigger>File</MenubarTrigger>
         <MenubarContent>
@@ -201,14 +167,14 @@ export const MenuBar = ({
         <MenubarContent>
           <AIFunctions
             aiActions={aiActions}
-            sendAIRequest={handleAIAction}
+            sendAIRequest={sendAIRequest}
             handleEditPrompt={handleEditPrompt}
             handleAddPrompt={handleAddPrompt}
             isPromptEditOpen={isPromptEditOpen}
             setIsPromptEditOpen={setIsPromptEditOpen}
             currentPrompt={currentPrompt}
             setCurrentPrompt={setCurrentPrompt}
-            closeMenu={closeMenu}
+            closeMenu={() => document.body.click()} // This will close the menu
           />
         </MenubarContent>
       </MenubarMenu>

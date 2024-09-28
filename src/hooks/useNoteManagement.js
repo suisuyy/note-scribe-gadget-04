@@ -25,8 +25,6 @@ export const useNoteManagement = () => {
   const editorRef = useRef(null);
   const navigate = useNavigate();
   const location = useLocation();
-  const [history, setHistory] = useState([]);
-  const [historyIndex, setHistoryIndex] = useState(-1);
 
   const handleChange = useCallback(
     (value, viewUpdate) => {
@@ -34,27 +32,9 @@ export const useNoteManagement = () => {
       setWordCount(value.trim().split(/\s+/).length);
       saveNote(value);
       editorRef.current = viewUpdate.view;
-      
-      // Add to history
-      setHistory(prevHistory => [...prevHistory.slice(0, historyIndex + 1), value]);
-      setHistoryIndex(prevIndex => prevIndex + 1);
     },
-    [noteId, historyIndex]
+    [noteId]
   );
-
-  const undo = () => {
-    if (historyIndex > 0) {
-      setHistoryIndex(prevIndex => prevIndex - 1);
-      setContent(history[historyIndex - 1]);
-    }
-  };
-
-  const redo = () => {
-    if (historyIndex < history.length - 1) {
-      setHistoryIndex(prevIndex => prevIndex + 1);
-      setContent(history[historyIndex + 1]);
-    }
-  };
 
   const openFile = () => {
     fileInputRef.current?.click();
@@ -136,61 +116,15 @@ export const useNoteManagement = () => {
       if (data) {
         setContent(data.content);
         setWordCount(data.content.trim().split(/\s+/).length);
-        // Reset history
-        setHistory([data.content]);
-        setHistoryIndex(0);
       } else {
         setContent('');
         setWordCount(0);
-        // Reset history
-        setHistory([]);
-        setHistoryIndex(-1);
       }
     } catch (error) {
       console.error('Error fetching note:', error);
       setContent('');
       setWordCount(0);
-      // Reset history
-      setHistory([]);
-      setHistoryIndex(-1);
     }
-  };
-
-  const sendAIRequest = async (prompt) => {
-    if (!editorRef.current) {
-      console.error("Editor not initialized");
-      return;
-    }
-    const selectedText = getSelectedText();
-    const fullPrompt = `${prompt}\n\nSelected text:\n${selectedText}`;
-    try {
-      const response = await fetch("https://simpleai.devilent2.workers.dev", {
-        method: "POST",
-        headers: {
-          "Content-Type": "application/x-www-form-urlencoded",
-        },
-        body: new URLSearchParams({ q: fullPrompt }),
-      });
-      const data = await response.text();
-      // Insert the AI response after the cursor and select it
-      const cursor = editorRef.current.state.selection.main.to;
-      const aiResponse = `\n\nAI Response:\n${data}\n\n`;
-      const transaction = editorRef.current.state.update({
-        changes: { from: cursor, insert: aiResponse },
-        selection: { anchor: cursor + 2, head: cursor + aiResponse.length },
-      });
-      editorRef.current.dispatch(transaction);
-    } catch (error) {
-      console.error("Error sending AI request:", error);
-    }
-  };
-
-  const getSelectedText = () => {
-    if (editorRef.current) {
-      const selection = editorRef.current.state.selection.main;
-      return editorRef.current.state.sliceDoc(selection.from, selection.to);
-    }
-    return "";
   };
 
   useEffect(() => {
@@ -252,8 +186,5 @@ export const useNoteManagement = () => {
     shareNote,
     handleSetNoteId,
     copyUrlToClipboard,
-    sendAIRequest,
-    undo,
-    redo,
   };
 };
