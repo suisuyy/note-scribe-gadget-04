@@ -234,8 +234,15 @@ export default function NoteTakingApp() {
         changes: { from: lineEnd, insert: `\nAI Response (${formattedDateTime}):\n${data}\n` },
         selection: { anchor: lineEnd + 1 },
       });
+
+      // Show notification
+      toast(fullPrompt, {
+        duration: 5000,
+        description: "AI request sent",
+      });
     } catch (error) {
       console.error("Error sending AI request:", error);
+      toast.error("Failed to send AI request");
     }
   };
 
