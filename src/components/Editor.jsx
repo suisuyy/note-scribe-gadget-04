@@ -23,9 +23,9 @@ export const Editor = ({ content, renderMarkdown, darkMode, fontSize, showLineNu
   }
 
   return (
-    <div className="p-0 w-full"> {/* Changed padding to 0 and set width to full */}
+    <div className="w-full p-0"> {/* Changed padding to 0 */}
       {renderMarkdown ? (
-        <div className="prose max-w-none dark:prose-invert p-4"> {/* Added padding here for markdown view */}
+        <div className="prose max-w-none dark:prose-invert p-4">
           <ReactMarkdown>{content}</ReactMarkdown>
         </div>
       ) : (
@@ -33,7 +33,7 @@ export const Editor = ({ content, renderMarkdown, darkMode, fontSize, showLineNu
           key={key}
           value={content}
           height="calc(100vh - 120px)"
-          width="100%" {/* Set width to 100% */}
+          width="100%"
           extensions={editorExtensions}
           onChange={handleChange}
           theme={darkMode ? "dark" : "light"}
