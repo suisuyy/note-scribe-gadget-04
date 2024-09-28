@@ -230,13 +230,12 @@ export default function NoteTakingApp() {
         selection: { anchor: lineEnd + 1 },
       });
 
-      // Show notification with improved formatting
+      // Updated notification with improved formatting
       toast(
         <div>
-          <p>{prompt}</p>
-          <p>Selected text:</p>
-          <p>{selectedText}</p>
-          <p>AI response sent</p>
+          <p><strong>Prompt:</strong> {prompt}</p>
+          <p><strong>Selected text:</strong> {selectedText || "No text selected"}</p>
+          <p><strong>AI response sent</strong></p>
         </div>,
         {
           duration: 5000,
