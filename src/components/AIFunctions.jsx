@@ -10,19 +10,9 @@ import {
 } from "@/components/ui/dialog";
 import { Edit2, MessageSquare, Plus } from "lucide-react";
 
-export const AIFunctions = ({ 
-  aiActions = [], 
-  sendAIRequest, 
-  handleEditPrompt, 
-  handleAddPrompt, 
-  isPromptEditOpen, 
-  setIsPromptEditOpen, 
-  currentPrompt, 
-  setCurrentPrompt,
-  setAiActions
-}) => {
+export const AIFunctions = ({ aiActions = [], sendAIRequest, handleEditPrompt, handleAddPrompt, isPromptEditOpen, setIsPromptEditOpen, currentPrompt, setCurrentPrompt }) => {
   const handleSavePrompt = () => {
-    if (currentPrompt && currentPrompt.name && currentPrompt.prompt) {
+    if (currentPrompt.name && currentPrompt.prompt) {
       const existingIndex = aiActions.findIndex(
         (action) => action.name === currentPrompt.name
       );
@@ -73,7 +63,7 @@ export const AIFunctions = ({
         <DialogContent>
           <DialogHeader>
             <DialogTitle>
-              {currentPrompt && currentPrompt.name ? "Edit AI Prompt" : "Add New AI Prompt"}
+              {currentPrompt.name ? "Edit AI Prompt" : "Add New AI Prompt"}
             </DialogTitle>
           </DialogHeader>
           <div className="space-y-4">
@@ -81,7 +71,7 @@ export const AIFunctions = ({
               <Label htmlFor="prompt-name">Name</Label>
               <Input
                 id="prompt-name"
-                value={currentPrompt ? currentPrompt.name : ''}
+                value={currentPrompt.name}
                 onChange={(e) =>
                   setCurrentPrompt({ ...currentPrompt, name: e.target.value })
                 }
@@ -91,7 +81,7 @@ export const AIFunctions = ({
               <Label htmlFor="prompt-content">Prompt</Label>
               <Input
                 id="prompt-content"
-                value={currentPrompt ? currentPrompt.prompt : ''}
+                value={currentPrompt.prompt}
                 onChange={(e) =>
                   setCurrentPrompt({ ...currentPrompt, prompt: e.target.value })
                 }

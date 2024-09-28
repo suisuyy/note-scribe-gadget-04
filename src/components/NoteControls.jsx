@@ -26,7 +26,6 @@ export const NoteControls = ({
   setIsPromptEditOpen,
   currentPrompt,
   setCurrentPrompt,
-  setAiActions
 }) => {
   return (
     <MenuBar
@@ -54,7 +53,6 @@ export const NoteControls = ({
       setIsPromptEditOpen={setIsPromptEditOpen}
       currentPrompt={currentPrompt}
       setCurrentPrompt={setCurrentPrompt}
-      setAiActions={setAiActions}
     />
   );
 };
