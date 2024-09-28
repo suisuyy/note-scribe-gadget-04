@@ -203,7 +203,7 @@ export default function NoteTakingApp() {
       return;
     }
     const selectedText = getSelectedText();
-    const fullPrompt = `${prompt}\n\n\nSelected text:\n${selectedText}`;
+    const fullPrompt = `${prompt}\n\nSelected text:\n${selectedText}`;
     try {
       const response = await fetch("https://simpleai.devilent2.workers.dev", {
         method: "POST",
@@ -226,7 +226,7 @@ export default function NoteTakingApp() {
       const cursor = editorRef.current.state.selection.main.to;
       const lineEnd = editorRef.current.state.doc.lineAt(cursor).to;
       editorRef.current.dispatch({
-        changes: { from: lineEnd, insert: `\n\n\nAI Response (${formattedDateTime}):\n${data}\n\n\n` },
+        changes: { from: lineEnd, insert: `\nAI Response (${formattedDateTime}):\n${data}\n` },
         selection: { anchor: lineEnd + 1 },
       });
 
@@ -234,10 +234,8 @@ export default function NoteTakingApp() {
       toast(
         <div>
           <p>{prompt}</p>
-          <p>&nbsp;</p>
           <p>Selected text:</p>
           <p>{selectedText}</p>
-          <p>&nbsp;</p>
           <p>AI response sent</p>
         </div>,
         {
