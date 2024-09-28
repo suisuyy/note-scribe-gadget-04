@@ -203,7 +203,7 @@ export default function NoteTakingApp() {
       return;
     }
     const selectedText = getSelectedText();
-    const fullPrompt = `${prompt}\n\nSelected text:\n${selectedText}`;
+    const fullPrompt = selectedText ? `Please correct any errors in the following text just give answer: ${selectedText}` : prompt;
     try {
       const response = await fetch("https://simpleai.devilent2.workers.dev", {
         method: "POST",
@@ -230,11 +230,10 @@ export default function NoteTakingApp() {
         selection: { anchor: lineEnd + 1 },
       });
 
-      // Updated notification with improved formatting
       toast(
         <div>
           <p><strong>Prompt:</strong> {prompt}</p>
-          <p><strong>Selected text:</strong> {selectedText || "No text selected"}</p>
+          {selectedText && <p><strong>Selected text:</strong> {selectedText}</p>}
           <p><strong>AI response sent</strong></p>
         </div>,
         {
