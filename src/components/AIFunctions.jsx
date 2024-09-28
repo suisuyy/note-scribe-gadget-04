@@ -13,20 +13,7 @@ import { Edit2, MessageSquare, Plus } from "lucide-react";
 export const AIFunctions = ({ aiActions = [], sendAIRequest, handleEditPrompt, handleAddPrompt, isPromptEditOpen, setIsPromptEditOpen, currentPrompt, setCurrentPrompt }) => {
   const handleSavePrompt = () => {
     if (currentPrompt && currentPrompt.name && currentPrompt.prompt) {
-      const existingIndex = aiActions.findIndex(
-        (action) => action.name === currentPrompt.name
-      );
-      if (existingIndex !== -1) {
-        // Update existing prompt
-        const updatedActions = [...aiActions];
-        updatedActions[existingIndex] = currentPrompt;
-        // Assuming setAiActions is passed as a prop, otherwise you need to pass it
-        // setAiActions(updatedActions);
-      } else {
-        // Add new prompt
-        // Assuming setAiActions is passed as a prop, otherwise you need to pass it
-        // setAiActions([...aiActions, currentPrompt]);
-      }
+      // Implement the logic to save the prompt
       setIsPromptEditOpen(false);
     } else {
       alert("Please provide both a name and a prompt.");
@@ -35,30 +22,34 @@ export const AIFunctions = ({ aiActions = [], sendAIRequest, handleEditPrompt, h
 
   return (
     <>
-      {Array.isArray(aiActions) && aiActions.map((action) => (
-        <div key={action.name} className="flex justify-between items-center">
-          <div
-            onClick={() => sendAIRequest(action.prompt)}
-            className="flex-grow cursor-pointer"
-          >
-            <MessageSquare className="mr-2 h-4 w-4 inline" />
-            {action.name}
+      {Array.isArray(aiActions) && aiActions.length > 0 ? (
+        aiActions.map((action) => (
+          <div key={action.name} className="flex justify-between items-center">
+            <div
+              onClick={() => sendAIRequest(action.prompt)}
+              className="flex-grow cursor-pointer"
+            >
+              <MessageSquare className="mr-2 h-4 w-4 inline" />
+              {action.name}
+            </div>
+            <Button
+              variant="ghost"
+              size="icon"
+              onClick={(e) => {
+                e.stopPropagation();
+                handleEditPrompt(action);
+              }}
+            >
+              <Edit2 className="h-4 w-4" />
+              <span className="sr-only">Edit {action.name} prompt</span>
+            </Button>
           </div>
-          <Button
-            variant="ghost"
-            size="icon"
-            onClick={(e) => {
-              e.stopPropagation();
-              handleEditPrompt(action);
-            }}
-          >
-            <Edit2 className="h-4 w-4" />
-            <span className="sr-only">Edit {action.name} prompt</span>
-          </Button>
-        </div>
-      ))}
-      <div onClick={handleAddPrompt}>
-        <Plus className="mr-2 h-4 w-4" />
+        ))
+      ) : (
+        <div className="text-sm text-gray-500 mb-2">No AI actions available</div>
+      )}
+      <div onClick={handleAddPrompt} className="cursor-pointer">
+        <Plus className="mr-2 h-4 w-4 inline" />
         Add New Prompt
       </div>
       <Dialog open={isPromptEditOpen} onOpenChange={setIsPromptEditOpen}>
