@@ -169,7 +169,33 @@ export default function NoteTakingApp() {
   const getSelectedText = () => {
     if (editorRef.current) {
       const selection = editorRef.current.state.selection.main;
-      return editorRef.current.state.sliceDoc(selection.from, selection.to);
+      if (selection.from !== selection.to) {
+        return editorRef.current.state.sliceDoc(selection.from, selection.to);
+      } else {
+        const content = editorRef.current.state.doc.toString();
+        const cursorPos = selection.from;
+        
+        let startPos = cursorPos;
+        let endPos = cursorPos;
+        let newlineCount = 0;
+        
+        // Find the start position (3 newlines before cursor)
+        while (startPos > 0 && newlineCount < 3) {
+          startPos--;
+          if (content[startPos] === '\n') newlineCount++;
+        }
+        
+        // Reset newline count for end position
+        newlineCount = 0;
+        
+        // Find the end position (3 newlines after cursor)
+        while (endPos < content.length && newlineCount < 3) {
+          if (content[endPos] === '\n') newlineCount++;
+          endPos++;
+        }
+        
+        return content.slice(startPos, endPos).trim();
+      }
     }
     return "";
   };
@@ -190,9 +216,19 @@ export default function NoteTakingApp() {
         body: new URLSearchParams({ q: fullPrompt }),
       });
       const data = await response.text();
+      const now = new Date();
+      const formattedDateTime = now.toLocaleString('en-US', {
+        year: 'numeric',
+        month: '2-digit',
+        day: '2-digit',
+        hour: '2-digit',
+        minute: '2-digit',
+        second: '2-digit',
+        hour12: false
+      });
       const cursor = editorRef.current.state.selection.main.to;
       editorRef.current.dispatch({
-        changes: { from: cursor, insert: `\n\nAI Response:\n${data}\n\n` },
+        changes: { from: cursor, insert: `\n\nAI Response (${formattedDateTime}):\n${data}\n\n` },
       });
     } catch (error) {
       console.error("Error sending AI request:", error);
