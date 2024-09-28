@@ -15,9 +15,7 @@ import {
 import { Input } from "@/components/ui/input";
 import { Button } from "@/components/ui/button";
 import { Label } from "@/components/ui/label";
-
-const supabaseUrl = "https://vyqkmpjwvoodeeskzvrk.supabase.co";
-const supabaseKey = "eyJhbGciOiJIUzI1NiIsInR5cCI6IkpXVCJ9.eyJpc3MiOiJzdXBhYmFzZSIsInJlZiI6InZ5cWttcGp3dm9vZGVlc2t6dnJrIiwicm9sZSI6InNlcnZpY2Vfcm9sZSIsImlhdCI6MTcyNzA2MDI1MCwiZXhwIjoyMDQyNjM2MjUwfQ.I-vbtdO1vl0RlNW_Ww7n4mo6Pl3NiMfJ0vWvcMdSq50";
+import { supabaseUrl, supabaseKey } from '../config/supabase';
 
 const supabase = createClient(supabaseUrl, supabaseKey);
 
@@ -181,16 +179,13 @@ export default function NoteTakingApp() {
         let endPos = cursorPos;
         let newlineCount = 0;
         
-        // Find the start position (3 newlines before cursor)
         while (startPos > 0 && newlineCount < 3) {
           startPos--;
           if (content[startPos] === '\n') newlineCount++;
         }
         
-        // Reset newline count for end position
         newlineCount = 0;
         
-        // Find the end position (3 newlines after cursor)
         while (endPos < content.length && newlineCount < 3) {
           if (content[endPos] === '\n') newlineCount++;
           endPos++;
@@ -235,11 +230,20 @@ export default function NoteTakingApp() {
         selection: { anchor: lineEnd + 1 },
       });
 
-      // Show notification
-      toast(fullPrompt, {
-        duration: 5000,
-        description: "AI request sent",
-      });
+      // Show notification with improved formatting
+      toast(
+        <div>
+          <p>{prompt}</p>
+          <p>&nbsp;</p>
+          <p>Selected text:</p>
+          <p>{selectedText}</p>
+          <p>&nbsp;</p>
+          <p>AI response sent</p>
+        </div>,
+        {
+          duration: 5000,
+        }
+      );
     } catch (error) {
       console.error("Error sending AI request:", error);
       toast.error("Failed to send AI request");
