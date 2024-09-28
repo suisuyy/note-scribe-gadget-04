@@ -145,14 +145,23 @@ export const useNoteManagement = () => {
       const data = await response.text();
       // Insert the AI response after the cursor and select it
       const cursor = editorRef.current.state.selection.main.to;
+      const aiResponse = `\n\nAI Response:\n${data}\n\n`;
       const transaction = editorRef.current.state.update({
-        changes: { from: cursor, insert: `\n\nAI Response:\n${data}\n\n` },
-        selection: { anchor: cursor + 2, head: cursor + data.length + 17 },
+        changes: { from: cursor, insert: aiResponse },
+        selection: { anchor: cursor + 2, head: cursor + aiResponse.length },
       });
       editorRef.current.dispatch(transaction);
     } catch (error) {
       console.error("Error sending AI request:", error);
     }
+  };
+
+  const getSelectedText = () => {
+    if (editorRef.current) {
+      const selection = editorRef.current.state.selection.main;
+      return editorRef.current.state.sliceDoc(selection.from, selection.to);
+    }
+    return "";
   };
 
   useEffect(() => {
