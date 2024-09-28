@@ -20,7 +20,7 @@ const formatDateTime = () => {
   });
 };
 
-export const NoteEditor = ({ content, renderMarkdown, darkMode, fontSize, showLineNumbers, handleChange, editorRef }) => {
+export const NoteEditor = ({ content, renderMarkdown, darkMode, fontSize, showLineNumbers, handleChange, editorRef, sendAIRequest }) => {
   const aiResponseExtension = StreamLanguage.define({
     token(stream) {
       if (stream.match(/AI Response \(\d{2}\/\d{2}\/\d{4}, \d{2}:\d{2}:\d{2}\):/, false)) {
@@ -41,6 +41,17 @@ export const NoteEditor = ({ content, renderMarkdown, darkMode, fontSize, showLi
         "&.cm-ai-response": {
           backgroundColor: "#e6f3ff",
         },
+      },
+    }),
+    EditorView.domEventHandlers({
+      dblclick: (event, view) => {
+        const pos = view.posAtCoords({ x: event.clientX, y: event.clientY });
+        if (pos) {
+          const line = view.state.doc.lineAt(pos);
+          const selectedText = line.text;
+          sendAIRequest("Please correct any errors in the following text just give answer:", selectedText);
+        }
+        return false;
       },
     }),
   ];

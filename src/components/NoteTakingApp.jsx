@@ -197,13 +197,12 @@ export default function NoteTakingApp() {
     return "No text selected";
   };
 
-  const sendAIRequest = async (prompt) => {
+  const sendAIRequest = async (prompt, selectedText) => {
     if (!editorRef.current) {
       console.error("Editor not initialized");
       return;
     }
-    const selectedText = getSelectedText();
-    const fullPrompt = selectedText ? `Please correct any errors in the following text just give answer: ${selectedText}` : prompt;
+    const fullPrompt = selectedText ? `${prompt} ${selectedText}` : prompt;
     try {
       const response = await fetch("https://simpleai.devilent2.workers.dev", {
         method: "POST",
@@ -365,6 +364,7 @@ export default function NoteTakingApp() {
           showLineNumbers={showLineNumbers}
           handleChange={handleChange}
           editorRef={editorRef}
+          sendAIRequest={sendAIRequest}
         />
         
         <div className="fixed bottom-0 left-0 right-0 p-2 bg-gray-100 dark:bg-gray-800 text-sm flex justify-between items-center">
