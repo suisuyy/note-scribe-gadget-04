@@ -3,18 +3,13 @@ import CodeMirror from "@uiw/react-codemirror";
 import { markdown, markdownLanguage } from "@codemirror/lang-markdown";
 import { languages } from "@codemirror/language-data";
 import { EditorView } from "@codemirror/view";
-import { lineNumbers } from "@codemirror/view";
 import ReactMarkdown from "react-markdown";
 
-const NoteEditor = ({ content, renderMarkdown, darkMode, fontSize, handleChange, editorRef, showLineNumbers }) => {
+export const NoteEditor = ({ content, renderMarkdown, darkMode, fontSize, handleChange, editorRef }) => {
   const editorExtensions = [
     markdown({ base: markdownLanguage, codeLanguages: languages }),
     EditorView.lineWrapping,
   ];
-
-  if (showLineNumbers) {
-    editorExtensions.push(lineNumbers());
-  }
 
   return (
     <div className="p-4">
@@ -38,5 +33,3 @@ const NoteEditor = ({ content, renderMarkdown, darkMode, fontSize, handleChange,
     </div>
   );
 };
-
-export default NoteEditor;
