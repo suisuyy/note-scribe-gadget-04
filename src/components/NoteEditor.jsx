@@ -8,13 +8,13 @@ import { StreamLanguage } from "@codemirror/language";
 import { createTheme } from "@uiw/codemirror-themes";
 
 const aiResponseTheme = createTheme({
-  theme: 'light',
+  theme: "light",
   settings: {
-    background: '#e6f3ff',
-    foreground: '#000000',
-    selection: '#b3d9ff',
-    selectionMatch: '#b3d9ff',
-    lineHighlight: '#e6f3ff',
+    background: "#e6f3ff",
+    foreground: "#000000",
+    selection: "#b3d9ff",
+    selectionMatch: "#b3d9ff",
+    lineHighlight: "#e6f3ff",
   },
 });
 
@@ -23,11 +23,11 @@ export const NoteEditor = ({ content, renderMarkdown, darkMode, fontSize, showLi
     markdown({ base: markdownLanguage, codeLanguages: languages }),
     EditorView.lineWrapping,
     StreamLanguage.define({
-      name: 'ai-response',
+      name: "ai-response",
       token: (stream) => {
-        if (stream.match('AI Response:', false)) {
+        if (stream.match("AI Response:", false)) {
           stream.skipToEnd();
-          return 'ai-response';
+          return "ai-response";
         }
         stream.next();
         return null;
@@ -36,9 +36,9 @@ export const NoteEditor = ({ content, renderMarkdown, darkMode, fontSize, showLi
   ];
 
   const customTheme = EditorView.theme({
-    '.cm-line': {
-      '&.ai-response': {
-        backgroundColor: '#e6f3ff',
+    ".cm-line": {
+      "&.ai-response": {
+        backgroundColor: "#e6f3ff",
       },
     },
   });
