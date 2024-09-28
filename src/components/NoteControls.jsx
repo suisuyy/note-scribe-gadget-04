@@ -1,11 +1,8 @@
 import React from 'react';
 import { MenuBar } from './MenuBar';
+import { downloadFile, openFile, shareNote } from '../utils/fileOperations';
 
 export const NoteControls = ({
-  openFile,
-  downloadFile,
-  saveNote,
-  shareNote,
   renderMarkdown,
   setRenderMarkdown,
   uiScale,
@@ -17,20 +14,24 @@ export const NoteControls = ({
   toggleFullscreen,
   setIsSettingsOpen,
   aiActions,
-  sendAIRequest,
-  handleEditPrompt,
-  handleAddPrompt,
-  isPromptEditOpen,
-  setIsPromptEditOpen,
-  currentPrompt,
-  setCurrentPrompt,
+  noteId,
+  content,
+  fileInputRef,
+  handleFileChange,
+  saveNote,
 }) => {
+  const handleSetNoteId = async (newId) => {
+    // Implement the logic to set the new note ID and load the note
+    // This might involve updating the URL and calling a loadNote function
+    console.log('Setting new note ID:', newId);
+  };
+
   return (
     <MenuBar
-      openFile={openFile}
-      downloadFile={downloadFile}
+      openFile={() => openFile(fileInputRef)}
+      downloadFile={() => downloadFile(content, noteId)}
       saveNote={saveNote}
-      shareNote={shareNote}
+      shareNote={() => shareNote(noteId)}
       renderMarkdown={renderMarkdown}
       setRenderMarkdown={setRenderMarkdown}
       uiScale={uiScale}
@@ -42,13 +43,9 @@ export const NoteControls = ({
       toggleFullscreen={toggleFullscreen}
       setIsSettingsOpen={setIsSettingsOpen}
       aiActions={aiActions}
-      sendAIRequest={sendAIRequest}
-      handleEditPrompt={handleEditPrompt}
-      handleAddPrompt={handleAddPrompt}
-      isPromptEditOpen={isPromptEditOpen}
-      setIsPromptEditOpen={setIsPromptEditOpen}
-      currentPrompt={currentPrompt}
-      setCurrentPrompt={setCurrentPrompt}
+      handleSetNoteId={handleSetNoteId}
     />
   );
 };
+
+export default NoteControls;
