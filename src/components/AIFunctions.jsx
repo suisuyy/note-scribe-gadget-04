@@ -9,6 +9,7 @@ import {
   DialogTitle,
 } from "@/components/ui/dialog";
 import { Edit2, MessageSquare, Plus } from "lucide-react";
+import { toast } from 'sonner';
 
 export const AIFunctions = ({ aiActions, setAiActions, editorRef }) => {
   const [isPromptEditOpen, setIsPromptEditOpen] = useState(false);
@@ -16,7 +17,7 @@ export const AIFunctions = ({ aiActions, setAiActions, editorRef }) => {
 
   const sendAIRequest = async (prompt) => {
     if (!editorRef || !editorRef.current) {
-      console.error("Editor not initialized");
+      toast.error("Editor not initialized. Please try again.");
       return;
     }
     const selectedText = getSelectedText();
@@ -37,6 +38,7 @@ export const AIFunctions = ({ aiActions, setAiActions, editorRef }) => {
       });
     } catch (error) {
       console.error("Error sending AI request:", error);
+      toast.error("Failed to process AI request. Please try again.");
     }
   };
 
@@ -69,7 +71,7 @@ export const AIFunctions = ({ aiActions, setAiActions, editorRef }) => {
       }
       setIsPromptEditOpen(false);
     } else {
-      alert("Please provide both a name and a prompt.");
+      toast.error("Please provide both a name and a prompt.");
     }
   };
 

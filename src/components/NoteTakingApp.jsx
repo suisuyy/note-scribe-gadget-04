@@ -2,9 +2,9 @@ import React, { useState, useRef, useEffect } from 'react';
 import { useNavigate, useLocation } from 'react-router-dom';
 import { createClient } from '@supabase/supabase-js';
 import { v4 as uuidv4 } from 'uuid';
-import NoteEditor from './NoteEditor';
+import { NoteEditor } from './NoteEditor';
 import NoteControls from './NoteControls';
-import AIFunctions from './AIFunctions';
+import { AIFunctions } from './AIFunctions';
 import { useNoteManagement } from '../hooks/useNoteManagement';
 
 const supabaseUrl = 'https://vyqkmpjwvoodeeskzvrk.supabase.co';
@@ -34,7 +34,6 @@ export default function NoteTakingApp() {
     setIsSettingsOpen,
     setShowLineNumbers,
     handleChange,
-    handleFileChange,
     saveNote,
     toggleFullscreen,
     loadNote,
@@ -78,7 +77,7 @@ export default function NoteTakingApp() {
           noteId={noteId}
           content={content}
           fileInputRef={fileInputRef}
-          handleFileChange={handleFileChange}
+          handleFileChange={handleChange}
           saveNote={saveNote}
         />
         <NoteEditor
@@ -102,7 +101,7 @@ export default function NoteTakingApp() {
         <input
           type="file"
           ref={fileInputRef}
-          onChange={handleFileChange}
+          onChange={handleChange}
           style={{ display: "none" }}
           accept=".txt,.md"
         />
