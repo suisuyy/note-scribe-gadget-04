@@ -56,33 +56,36 @@ export const MenuBar = ({
   setCurrentPrompt,
   handleUndo,
   handleRedo,
-  getSelectedText, // Add this line
+  getSelectedText,
   addNotification,
 }) => {
   return (
     <Menubar className="px-2 border-b border-border flex justify-between items-center">
       <div className="flex items-center">
+        {/* File Menu */}
         <MenubarMenu>
           <MenubarTrigger>File</MenubarTrigger>
           <MenubarContent>
-            <MenubarItem onClick={openFile}>
+            <MenubarItem onSelect={openFile}>
               <FileText className="mr-2 h-4 w-4" />
               Open
             </MenubarItem>
-            <MenubarItem onClick={downloadFile}>
+            <MenubarItem onSelect={downloadFile}>
               <Download className="mr-2 h-4 w-4" />
               Download
             </MenubarItem>
-            <MenubarItem onClick={saveNote}>
+            <MenubarItem onSelect={saveNote}>
               <Save className="mr-2 h-4 w-4" />
               Save
             </MenubarItem>
-            <MenubarItem onClick={shareNote}>
+            <MenubarItem onSelect={shareNote}>
               <Share2 className="mr-2 h-4 w-4" />
               Share
             </MenubarItem>
           </MenubarContent>
         </MenubarMenu>
+
+        {/* View Menu */}
         <MenubarMenu>
           <MenubarTrigger>View</MenubarTrigger>
           <MenubarContent>
@@ -164,12 +167,14 @@ export const MenuBar = ({
                 />
               </div>
             </MenubarItem>
-            <MenubarItem onClick={toggleFullscreen}>
+            <MenubarItem onSelect={toggleFullscreen}>
               <Maximize className="mr-2 h-4 w-4" />
               Fullscreen
             </MenubarItem>
           </MenubarContent>
         </MenubarMenu>
+
+        {/* AI Menu */}
         <MenubarMenu>
           <MenubarTrigger>AI</MenubarTrigger>
           <MenubarContent>
@@ -182,22 +187,26 @@ export const MenuBar = ({
               setIsPromptEditOpen={setIsPromptEditOpen}
               currentPrompt={currentPrompt}
               setCurrentPrompt={setCurrentPrompt}
-              closeMenu={() => document.body.click()} // This will close the menu
-              getSelectedText={getSelectedText} // Add this line
-              addNotification={addNotification} // Add this line
+              closeMenu={() => {}} // Removed the hacky closeMenu
+              getSelectedText={getSelectedText}
+              addNotification={addNotification}
             />
           </MenubarContent>
         </MenubarMenu>
+
+        {/* Settings Menu */}
         <MenubarMenu>
           <MenubarTrigger>Settings</MenubarTrigger>
           <MenubarContent>
-            <MenubarItem onClick={() => setIsSettingsOpen(true)}>
+            <MenubarItem onSelect={() => setIsSettingsOpen(true)}>
               <Settings className="mr-2 h-4 w-4" />
               Set Note ID
             </MenubarItem>
           </MenubarContent>
         </MenubarMenu>
       </div>
+
+      {/* Undo/Redo and View Toggle */}
       <div className="flex items-center space-x-2">
         <Button variant="ghost" size="icon" onClick={handleUndo}>
           <Undo className="h-4 w-4" />
