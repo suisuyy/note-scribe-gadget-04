@@ -61,13 +61,27 @@ export default function NoteTakingApp() {
 
   const addNotification = (message) => {
     const id = uuidv4();
-    setNotifications((prev) => [...prev, { id, message }]);
-    setTimeout(() => removeNotification(id), 5000); // Increased delay to 5 seconds
+    const timeoutId = setTimeout(() => removeNotification(id), 5000); // Increased delay to 5 seconds
+    setNotifications((prev) => [...prev, { id, message, timeoutId }]);
   };
 
 
   const removeNotification = (id) => {
     setNotifications((prev) => prev.filter((notif) => notif.id !== id));
+  };
+
+
+  const handleNotificationClick = (id) => {
+    setNotifications((prev) => {
+      const updatedNotifications = prev.map((notif) => {
+        if (notif.id === id) {
+          clearTimeout(notif.timeoutId); // Clear the timeout
+          return { ...notif, timeoutId: null }; // Set timeoutId to null to indicate it shouldn't auto-remove
+        }
+        return notif;
+      });
+      return updatedNotifications;
+    });
   };
 
 
@@ -107,7 +121,7 @@ export default function NoteTakingApp() {
 
 
   const sendAIRequest = async (prompt, selectedText) => {
-    const fullPrompt = `${prompt}\n\n${selectedText}`; // Removed "Selected text:"
+    const fullPrompt = `${prompt}\n\n${selectedText}`;
     try {
       const response = await fetch("https://simpleai.devilent2.workers.dev", {
         method: "POST",
@@ -130,9 +144,10 @@ export default function NoteTakingApp() {
       const cursor = editorRef.current.state.selection.main.to;
       const lineEnd = editorRef.current.state.doc.lineAt(cursor).to;
       editorRef.current.dispatch({
-        changes: { from: lineEnd, insert: `\nAI Response (${formattedDateTime}):\n${data}\n` },
+        changes: { from: lineEnd, insert: `\n### AI Response (${formattedDateTime}):\n${data}\n` }, // Added ###
         selection: { anchor: lineEnd + 1 },
       });
+      addNotification(`AI request sent for the current block.\n\nFull Prompt:\n${fullPrompt}`);
     } catch (error) {
       console.error("Error sending AI request:", error);
     }
@@ -169,15 +184,12 @@ export default function NoteTakingApp() {
           const currentBlock = getSelectedText();
           if (currentBlock) {
             const askPrompt = aiActions.find(action => action.name === "Ask")?.prompt || "Be concise:";
-            const fullPrompt = `${askPrompt}\n\n${currentBlock}`; // Removed "Selected text:"
             sendAIRequest(askPrompt, currentBlock);
-            addNotification("AI request sent for the current block.");
-            addNotification(`Full Prompt:\n${fullPrompt}`);
           }
         }
       }
     },
-    [editorRef, sendAIRequest, addNotification, getSelectedText, aiActions]
+    [editorRef, sendAIRequest, getSelectedText, aiActions]
   );
 
 
@@ -432,6 +444,7 @@ export default function NoteTakingApp() {
               id={notif.id}
               message={notif.message}
               onClose={removeNotification}
+              onClick={() => handleNotificationClick(notif.id)} // Add onClick handler
             />
           ))}
         </div>

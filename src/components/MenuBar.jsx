@@ -108,7 +108,7 @@ export const MenuBar = ({
                 <Switch
                   id="line-numbers-switch"
                   checked={showLineNumbers}
-                  onCheckedChange={setShowLineNumbers}
+                  onCheckedChange={(checked) => setShowLineNumbers(checked)}
                 />
               </div>
             </MenubarItem>

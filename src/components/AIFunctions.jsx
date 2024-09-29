@@ -20,9 +20,7 @@ export const AIFunctions = ({
     const selectedText = getSelectedText();
     const fullPrompt = `${action.prompt}\n\n${selectedText}`; // Removed "Selected text:"
     sendAIRequest(action.prompt, selectedText);
-    addNotification(`AI request sent: ${action.name}`);
-    addNotification(`Full Prompt:\n${fullPrompt}`);
-    closeMenu();
+    closeMenu(); // Close the menu after an action is clicked
   };
 
   return (
