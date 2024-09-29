@@ -372,74 +372,82 @@ export default function NoteTakingApp() {
         }`}
         style={{ fontSize: `${fontSize}px`, zoom: `${uiScale}%` }}
       >
-        <NoteControls
-          openFile={openFile}
-          downloadFile={downloadFile}
-          saveNote={() => saveNote(content)}
-          shareNote={shareNote}
-          renderMarkdown={renderMarkdown}
-          setRenderMarkdown={setRenderMarkdown}
-          showLineNumbers={showLineNumbers}
-          setShowLineNumbers={setShowLineNumbers}
-          uiScale={uiScale}
-          setUiScale={setUiScale}
-          fontSize={fontSize}
-          setFontSize={setFontSize}
-          darkMode={darkMode}
-          setDarkMode={setDarkMode}
-          toggleFullscreen={toggleFullscreen}
-          setIsSettingsOpen={setIsSettingsOpen}
-          aiActions={aiActions}
-          sendAIRequest={sendAIRequest}
-          handleEditPrompt={handleEditPrompt}
-          handleAddPrompt={handleAddPrompt}
-          isPromptEditOpen={isPromptEditOpen}
-          setIsPromptEditOpen={setIsPromptEditOpen}
-          currentPrompt={currentPrompt}
-          setCurrentPrompt={setCurrentPrompt}
-          handleUndo={handleUndo}
-          handleRedo={handleRedo}
-          getSelectedText={getSelectedText}
-          addNotification={addNotification} // Pass addNotification
-        />
-        
-        <NoteEditor
-          content={content}
-          renderMarkdown={renderMarkdown}
-          darkMode={darkMode}
-          fontSize={fontSize}
-          showLineNumbers={showLineNumbers}
-          handleChange={handleChange}
-          editorRef={editorRef}
-        />
-        
-        <div className="fixed bottom-0 left-0 right-0 p-2 bg-gray-100 dark:bg-gray-800 text-sm flex justify-between items-center">
-          <span>Word count: {wordCount}</span>
-          <button
-            onClick={copyUrlToClipboard}
-            className="text-blue-500 hover:text-blue-700 dark:text-blue-400 dark:hover:text-blue-300"
-          >
-            {`${window.location.origin}?id=${noteId}`}
-          </button>
+        {/* Fixed TopBar */}
+        <div className="fixed top-0 left-0 right-0 z-50">
+          <NoteControls
+            openFile={openFile}
+            downloadFile={downloadFile}
+            saveNote={() => saveNote(content)}
+            shareNote={shareNote}
+            renderMarkdown={renderMarkdown}
+            setRenderMarkdown={setRenderMarkdown}
+            showLineNumbers={showLineNumbers}
+            setShowLineNumbers={setShowLineNumbers}
+            uiScale={uiScale}
+            setUiScale={setUiScale}
+            fontSize={fontSize}
+            setFontSize={setFontSize}
+            darkMode={darkMode}
+            setDarkMode={setDarkMode}
+            toggleFullscreen={toggleFullscreen}
+            setIsSettingsOpen={setIsSettingsOpen}
+            aiActions={aiActions}
+            sendAIRequest={sendAIRequest}
+            handleEditPrompt={handleEditPrompt}
+            handleAddPrompt={handleAddPrompt}
+            isPromptEditOpen={isPromptEditOpen}
+            setIsPromptEditOpen={setIsPromptEditOpen}
+            currentPrompt={currentPrompt}
+            setCurrentPrompt={setCurrentPrompt}
+            handleUndo={handleUndo}
+            handleRedo={handleRedo}
+            getSelectedText={getSelectedText}
+            addNotification={addNotification} // Pass addNotification
+          />
         </div>
         
-        <input
-          type="file"
-          ref={fileInputRef}
-          onChange={handleFileChange}
-          style={{ display: "none" }}
-          accept=".txt,.md"
-        />
-        <div className="fixed top-4 right-4 z-50 space-y-2">
-          {notifications.map((notif) => (
-            <Notification
-              key={notif.id}
-              id={notif.id}
-              message={notif.message}
-              onClose={removeNotification}
-              onClick={() => handleNotificationClick(notif.id)} // Add onClick handler
-            />
-          ))}
+        {/* Main Content Area */}
+        <div className="flex flex-col h-screen pt-16"> {/* Added pt-16 here */}
+          <NoteEditor
+            content={content}
+            renderMarkdown={renderMarkdown}
+            darkMode={darkMode}
+            fontSize={fontSize}
+            showLineNumbers={showLineNumbers}
+            handleChange={handleChange}
+            editorRef={editorRef}
+            className="flex-1" // Make the editor expand to fill available space
+          />
+          
+          {/* Fixed BottomBar */}
+          <div className="fixed bottom-0 left-0 right-0 p-2 bg-gray-100 dark:bg-gray-800 text-sm flex justify-between items-center z-50">
+            <span>Word count: {wordCount}</span>
+            <button
+              onClick={copyUrlToClipboard}
+              className="text-blue-500 hover:text-blue-700 dark:text-blue-400 dark:hover:text-blue-300"
+            >
+              {`${window.location.origin}?id=${noteId}`}
+            </button>
+          </div>
+          
+          <input
+            type="file"
+            ref={fileInputRef}
+            onChange={handleFileChange}
+            style={{ display: "none" }}
+            accept=".txt,.md"
+          />
+          <div className="fixed top-4 right-4 z-50 space-y-2">
+            {notifications.map((notif) => (
+              <Notification
+                key={notif.id}
+                id={notif.id}
+                message={notif.message}
+                onClose={removeNotification}
+                onClick={() => handleNotificationClick(notif.id)} // Add onClick handler
+              />
+            ))}
+          </div>
         </div>
       </div>
       <Dialog open={isSettingsOpen} onOpenChange={setIsSettingsOpen}>

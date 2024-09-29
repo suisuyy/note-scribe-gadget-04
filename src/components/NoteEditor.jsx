@@ -20,7 +20,7 @@ const formatDateTime = () => {
   });
 };
 
-export const NoteEditor = ({ content, renderMarkdown, darkMode, fontSize, showLineNumbers, handleChange, editorRef }) => {
+export const NoteEditor = ({ content, renderMarkdown, darkMode, fontSize, showLineNumbers, handleChange, editorRef, className }) => {
   const aiResponseExtension = StreamLanguage.define({
     token(stream) {
       if (stream.match(/AI Response \(\d{2}\/\d{2}\/\d{4}, \d{2}:\d{2}:\d{2}\):/, false)) {
@@ -88,7 +88,7 @@ export const NoteEditor = ({ content, renderMarkdown, darkMode, fontSize, showLi
   };
 
   return (
-    <div className="h-full w-full">
+    <div className={`h-full w-full ${className}`}> {/* Applied flex-1 from parent */}
       {renderMarkdown ? (
         <div className="prose max-w-none dark:prose-invert">
           <ReactMarkdown>{content}</ReactMarkdown>
