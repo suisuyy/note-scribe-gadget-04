@@ -20,7 +20,7 @@ const formatDateTime = () => {
   });
 };
 
-export const NoteEditor = ({ content, renderMarkdown, darkMode, fontSize, showLineNumbers, handleChange, editorRef, className }) => {
+export const NoteEditor = ({ content, renderMarkdown, darkMode, fontSize, showLineNumbers, handleChange, editorRef }) => {
   const aiResponseExtension = StreamLanguage.define({
     token(stream) {
       if (stream.match(/AI Response \(\d{2}\/\d{2}\/\d{4}, \d{2}:\d{2}:\d{2}\):/, false)) {
@@ -88,25 +88,23 @@ export const NoteEditor = ({ content, renderMarkdown, darkMode, fontSize, showLi
   };
 
   return (
-    <div className={`h-full w-full ${className}`}> {/* Applied flex-1 from parent */}
+    <div className="h-full w-full overflow-auto"> {/* Added overflow-auto here */}
       {renderMarkdown ? (
-        <div className="prose max-w-none dark:prose-invert">
+        <div className="prose max-w-none dark:prose-invert h-full overflow-auto p-4">
           <ReactMarkdown>{content}</ReactMarkdown>
         </div>
       ) : (
-        <div className="h-full w-full p-0">
-          <CodeMirror
-            value={content}
-            height="100%"
-            extensions={getEditorExtensions()}
-            onChange={handleChange}
-            theme={darkMode ? "dark" : "light"}
-            onCreateEditor={(view) => {
-              editorRef.current = view;
-            }}
-            style={{ fontSize: `${fontSize}px`, padding: 0 }}
-          />
-        </div>
+        <CodeMirror
+          value={content}
+          height="100%"
+          extensions={getEditorExtensions()}
+          onChange={handleChange}
+          theme={darkMode ? "dark" : "light"}
+          onCreateEditor={(view) => {
+            editorRef.current = view;
+          }}
+          style={{ fontSize: `${fontSize}px` }}
+        />
       )}
     </div>
   );

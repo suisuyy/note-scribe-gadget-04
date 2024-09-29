@@ -18,7 +18,7 @@ export const Editor = ({ content, renderMarkdown, darkMode, fontSize, showLineNu
   }
 
   return (
-    <div className="p-4">
+    <div className="p-4 " >
       {renderMarkdown ? (
         <div className="prose max-w-none dark:prose-invert">
           <ReactMarkdown>{content}</ReactMarkdown>
