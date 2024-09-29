@@ -407,7 +407,7 @@ export default function NoteTakingApp() {
         </div>
         
         {/* Editor Container */}
-        <div className="flex-grow overflow-auto"> {/* Changed from overflow-hidden to overflow-auto */}
+        <div className="flex-grow overflow-auto relative"> {/* Added relative positioning */}
           <NoteEditor
             content={content}
             renderMarkdown={renderMarkdown}
@@ -417,6 +417,19 @@ export default function NoteTakingApp() {
             handleChange={handleChange}
             editorRef={editorRef}
           />
+          
+          {/* Notification container */}
+          <div className="absolute top-4 right-4 z-50 space-y-2 max-w-[500px]">
+            {notifications.map((notif) => (
+              <Notification
+                key={notif.id}
+                id={notif.id}
+                message={notif.message}
+                onClose={removeNotification}
+                onClick={() => handleNotificationClick(notif.id)}
+              />
+            ))}
+          </div>
         </div>
         
         {/* BottomBar */}
