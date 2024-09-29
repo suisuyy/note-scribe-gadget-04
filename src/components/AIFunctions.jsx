@@ -1,7 +1,6 @@
 import React from 'react';
 import { Button } from "@/components/ui/button";
 import { MessageSquare, Edit2, Plus } from "lucide-react";
-import { MenubarItem } from "@/components/ui/menubar"; // Import MenubarItem
 
 export const AIFunctions = ({ 
   aiActions, 
@@ -12,41 +11,42 @@ export const AIFunctions = ({
   setIsPromptEditOpen, 
   currentPrompt, 
   setCurrentPrompt, 
-  // remove closeMenu
+  closeMenu, 
   getSelectedText, 
   addNotification 
 }) => {
 
   const handleAIAction = (action) => {
     const selectedText = getSelectedText();
+    const fullPrompt = `${action.prompt}\n\n${selectedText}`; // Removed "Selected text:"
     sendAIRequest(action.prompt, selectedText);
-    // Remove closeMenu call
-    // closeMenu();
+    closeMenu(); // Close the menu after an action is clicked
   };
 
   return (
     <>
       {aiActions && aiActions.length > 0 ? (
         aiActions.map((action) => (
-          <MenubarItem key={action.name} onSelect={() => handleAIAction(action)}>
-            <div className="flex justify-between items-center">
-              <div className="flex-grow">
-                <MessageSquare className="mr-2 h-4 w-4 inline" />
-                {action.name}
-              </div>
-              <Button
-                variant="ghost"
-                size="icon"
-                onClick={(e) => {
-                  e.stopPropagation();
-                  handleEditPrompt(action);
-                }}
-              >
-                <Edit2 className="h-4 w-4" />
-                <span className="sr-only">Edit {action.name} prompt</span>
-              </Button>
+          <div key={action.name} className="flex justify-between items-center">
+            <div
+              onClick={() => handleAIAction(action)}
+              className="flex-grow cursor-pointer"
+            >
+              <MessageSquare className="mr-2 h-4 w-4 inline" />
+              {action.name}
             </div>
-          </MenubarItem>
+            <Button
+              variant="ghost"
+              size="icon"
+              onClick={(e) => {
+                e.stopPropagation();
+                handleEditPrompt(action);
+              }}
+            >
+              <Edit2 className="h-4 w-4" />
+              <span className="sr-only">Edit {action.name} prompt</span>
+            </Button>
+          </div>
         ))
       ) : (
         <div className="text-sm text-gray-500 mb-2">No AI actions available</div>

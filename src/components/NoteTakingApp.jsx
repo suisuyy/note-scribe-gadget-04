@@ -87,33 +87,26 @@ export default function NoteTakingApp() {
 
   const getSelectedText = () => {
     if (editorRef.current) {
-      const selection = editorRef.current.state.selection.main;
+      const { state } = editorRef.current;
+      const selection = state.selection.main;
       if (selection.from !== selection.to) {
-        return editorRef.current.state.sliceDoc(selection.from, selection.to);
+        return state.sliceDoc(selection.from, selection.to);
       } else {
-        const content = editorRef.current.state.doc.toString();
+        const content = state.doc.toString();
         const cursorPos = selection.from;
         
-        let startPos = cursorPos;
-        let endPos = cursorPos;
-        let newlineCount = 0;
+        // Find the start of the block (three consecutive newlines before the cursor)
+        const beforeCursor = content.substring(0, cursorPos);
+        const startBlock = beforeCursor.lastIndexOf('\n\n\n');
         
-        // Find the start position (2 newlines before cursor)
-        while (startPos > 0 && newlineCount < 2) {
-          startPos--;
-          if (content[startPos] === '\n') newlineCount++;
-        }
+        const startPos = startBlock !== -1 ? startBlock + 3 : 0;
         
-        // Reset newline count for end position
-        newlineCount = 0;
+        // Find the end of the block (three consecutive newlines after the cursor)
+        const afterCursor = content.substring(cursorPos);
+        const endBlock = afterCursor.indexOf('\n\n\n');
+        const endPos = endBlock !== -1 ? cursorPos + endBlock : content.length;
         
-        // Find the end position (2 newlines after cursor)
-        while (endPos < content.length && newlineCount < 2) {
-          if (content[endPos] === '\n') newlineCount++;
-          endPos++;
-        }
-        
-        return content.slice(startPos, endPos).trim();
+        return content.substring(startPos, endPos).trim();
       }
     }
     return "";

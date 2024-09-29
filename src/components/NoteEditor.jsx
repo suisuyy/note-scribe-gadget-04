@@ -60,6 +60,33 @@ export const NoteEditor = ({ content, renderMarkdown, darkMode, fontSize, showLi
     }
   }, [showLineNumbers]);
 
+  const getSelectedText = () => {
+    if (editorRef.current) {
+      const { state } = editorRef.current;
+      const selection = state.selection.main;
+      if (selection.from !== selection.to) {
+        return state.sliceDoc(selection.from, selection.to);
+      } else {
+        const content = state.doc.toString();
+        const cursorPos = selection.from;
+        
+        // Find the start of the block (three consecutive newlines before the cursor)
+        const beforeCursor = content.substring(0, cursorPos);
+        const startBlock = beforeCursor.lastIndexOf('\n\n\n');
+        
+        const startPos = startBlock !== -1 ? startBlock + 3 : 0;
+        
+        // Find the end of the block (three consecutive newlines after the cursor)
+        const afterCursor = content.substring(cursorPos);
+        const endBlock = afterCursor.indexOf('\n\n\n');
+        const endPos = endBlock !== -1 ? cursorPos + endBlock : content.length;
+        
+        return content.substring(startPos, endPos).trim();
+      }
+    }
+    return "";
+  };
+
   return (
     <div className="h-full w-full">
       {renderMarkdown ? (
