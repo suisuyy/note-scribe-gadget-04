@@ -10,11 +10,11 @@ import {
 export const HelpDialog = ({ isOpen, setIsOpen }) => {
   return (
     <Dialog open={isOpen} onOpenChange={setIsOpen}>
-      <DialogContent>
+      <DialogContent className="max-w-3xl">
         <DialogHeader>
           <DialogTitle>How to Use the App</DialogTitle>
         </DialogHeader>
-        <DialogDescription>
+        <DialogDescription className="max-h-[70vh] overflow-y-auto pr-4">
           <h3 className="font-bold mt-4">Basic Usage:</h3>
           <ul className="list-disc pl-5 space-y-2">
             <li>Type or paste your text in the main editor area.</li>
@@ -50,6 +50,14 @@ export const HelpDialog = ({ isOpen, setIsOpen }) => {
             <li>Toggle the "Render Markdown" switch to on.</li>
             <li>Your note will now be displayed as rendered markdown.</li>
             <li>Toggle the switch off to return to the plain text editor view.</li>
+          </ul>
+
+          <h3 className="font-bold mt-4">Using HTML in Markdown:</h3>
+          <ul className="list-disc pl-5 space-y-2">
+            <li>You can use HTML tags like &lt;audio&gt; and &lt;iframe&gt; in your markdown.</li>
+            <li>These tags will be rendered properly when "Render Markdown" is enabled.</li>
+            <li>Example: &lt;audio controls src="path/to/audio.mp3"&gt;&lt;/audio&gt;</li>
+            <li>Example: &lt;iframe src="https://www.youtube.com/embed/VIDEO_ID"&gt;&lt;/iframe&gt;</li>
           </ul>
         </DialogDescription>
       </DialogContent>

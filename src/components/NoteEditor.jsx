@@ -6,6 +6,7 @@ import { EditorView } from "@codemirror/view";
 import { lineNumbers } from "@codemirror/view"; // Ensure lineNumbers is imported
 import { StreamLanguage } from "@codemirror/language";
 import ReactMarkdown from "react-markdown";
+import rehypeRaw from 'rehype-raw'; // Import rehype-raw
 
 const formatDateTime = () => {
   const now = new Date();
@@ -91,7 +92,16 @@ export const NoteEditor = ({ content, renderMarkdown, darkMode, fontSize, showLi
     <div className="h-full w-full overflow-auto"> {/* Added overflow-auto here */}
       {renderMarkdown ? (
         <div className="prose max-w-none dark:prose-invert h-full overflow-auto p-4">
-          <ReactMarkdown>{content}</ReactMarkdown>
+          <ReactMarkdown
+            rehypePlugins={[rehypeRaw]} // Add rehypeRaw plugin
+            components={{
+              // Custom components for specific HTML tags
+              audio: ({node, ...props}) => <audio controls {...props} />,
+              iframe: ({node, ...props}) => <iframe {...props} />,
+            }}
+          >
+            {content}
+          </ReactMarkdown>
         </div>
       ) : (
         <CodeMirror
