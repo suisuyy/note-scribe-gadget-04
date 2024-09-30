@@ -28,6 +28,7 @@ import {
   Redo,
 } from "lucide-react";
 import { AIFunctions } from './AIFunctions';
+import { HelpCircle } from 'lucide-react'; // Add this import
 
 export const MenuBar = ({
   openFile,
@@ -58,6 +59,7 @@ export const MenuBar = ({
   handleRedo,
   getSelectedText,
   addNotification,
+  setIsHelpOpen, // Add this prop
 }) => {
   return (
     <Menubar className="px-2 border-b border-border flex justify-between items-center">
@@ -201,6 +203,11 @@ export const MenuBar = ({
             <MenubarItem onSelect={() => setIsSettingsOpen(true)}>
               <Settings className="mr-2 h-4 w-4" />
               Set Note ID
+            </MenubarItem>
+            <MenubarSeparator />
+            <MenubarItem onSelect={() => setIsHelpOpen(true)}>
+              <HelpCircle className="mr-2 h-4 w-4" />
+              Help
             </MenubarItem>
           </MenubarContent>
         </MenubarMenu>

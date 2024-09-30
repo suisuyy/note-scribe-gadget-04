@@ -30,6 +30,7 @@ export const NoteControls = ({
   handleRedo,
   getSelectedText, // Add this line
   addNotification, // Add this line
+  setIsHelpOpen, // Add this prop
 }) => {
   return (
     <MenuBar
@@ -61,6 +62,7 @@ export const NoteControls = ({
       handleRedo={handleRedo}
       getSelectedText={getSelectedText} // Add this line
       addNotification={addNotification} // Add this line
+      setIsHelpOpen={setIsHelpOpen} // Add this prop
     />
   );
 };

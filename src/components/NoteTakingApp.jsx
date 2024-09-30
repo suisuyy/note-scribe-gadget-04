@@ -16,6 +16,7 @@ import { Button } from "@/components/ui/button";
 import { Label } from "@/components/ui/label";
 import Notification from './Notification';
 import { supabaseUrl, supabaseKey } from '../supabaseConfig'; // Import the configuration
+import { HelpDialog } from './HelpDialog';
 
 const supabase = createClient(supabaseUrl, supabaseKey);
 
@@ -47,12 +48,13 @@ export default function NoteTakingApp() {
     return savedActions
       ? JSON.parse(savedActions)
       : [
-          { name: "Ask", prompt: "Be concise:" },
+          { name: "Ask", prompt: "response me in concise and cool way now:" },
           { name: "Correct", prompt: "correct the text , just only give me corrected text" },
-          { name: "Translate", prompt: "Translate to English Japanese:" },
+          { name: "Translate", prompt: "translate text to English and Japanese:" },
         ];
   });
 
+  const [isHelpOpen, setIsHelpOpen] = useState(false);
 
   useEffect(() => {
     localStorage.setItem("aiActions", JSON.stringify(aiActions));
@@ -403,11 +405,12 @@ export default function NoteTakingApp() {
             handleRedo={handleRedo}
             getSelectedText={getSelectedText}
             addNotification={addNotification}
+            setIsHelpOpen={setIsHelpOpen}
           />
         </div>
         
         {/* Editor Container */}
-        <div className="flex-grow overflow-auto relative"> {/* Added relative positioning */}
+        <div className="flex-grow overflow-auto">
           <NoteEditor
             content={content}
             renderMarkdown={renderMarkdown}
@@ -417,19 +420,6 @@ export default function NoteTakingApp() {
             handleChange={handleChange}
             editorRef={editorRef}
           />
-          
-          {/* Notification container */}
-          <div className="absolute top-4 right-4 z-50 space-y-2 max-w-[500px]">
-            {notifications.map((notif) => (
-              <Notification
-                key={notif.id}
-                id={notif.id}
-                message={notif.message}
-                onClose={removeNotification}
-                onClick={() => handleNotificationClick(notif.id)}
-              />
-            ))}
-          </div>
         </div>
         
         {/* BottomBar */}
@@ -442,9 +432,21 @@ export default function NoteTakingApp() {
             {`${window.location.origin}?id=${noteId}`}
           </button>
         </div>
+
+        {/* Notification container */}
+        <div className="absolute bottom-16 right-4 z-50 space-y-2 max-w-[500px]">
+          {notifications.map((notif) => (
+            <Notification
+              key={notif.id}
+              id={notif.id}
+              message={notif.message}
+              onClose={removeNotification}
+              onClick={() => handleNotificationClick(notif.id)}
+            />
+          ))}
+        </div>
       </div>
       
-      {/* The rest of the component remains the same */}
       <input
         type="file"
         ref={fileInputRef}
@@ -452,17 +454,8 @@ export default function NoteTakingApp() {
         style={{ display: "none" }}
         accept=".txt,.md"
       />
-      <div className="fixed top-4 right-4 z-50 space-y-2">
-        {notifications.map((notif) => (
-          <Notification
-            key={notif.id}
-            id={notif.id}
-            message={notif.message}
-            onClose={removeNotification}
-            onClick={() => handleNotificationClick(notif.id)}
-          />
-        ))}
-      </div>
+      
+      {/* Dialogs */}
       <Dialog open={isSettingsOpen} onOpenChange={setIsSettingsOpen}>
         <DialogContent>
           <DialogHeader>
@@ -510,6 +503,7 @@ export default function NoteTakingApp() {
           </div>
         </DialogContent>
       </Dialog>
+      <HelpDialog isOpen={isHelpOpen} setIsOpen={setIsHelpOpen} />
     </div>
   );
 }
