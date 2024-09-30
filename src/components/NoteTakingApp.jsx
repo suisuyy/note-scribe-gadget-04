@@ -17,6 +17,7 @@ import { Label } from "@/components/ui/label";
 import Notification from './Notification';
 import { supabaseUrl, supabaseKey } from '../supabaseConfig'; // Import the configuration
 import { HelpDialog } from './HelpDialog';
+import { debounce } from 'lodash'; // Add this import
 
 const supabase = createClient(supabaseUrl, supabaseKey);
 
@@ -55,6 +56,7 @@ export default function NoteTakingApp() {
   });
 
   const [isHelpOpen, setIsHelpOpen] = useState(false);
+  const [isSynced, setIsSynced] = useState(true);
 
   useEffect(() => {
     localStorage.setItem("aiActions", JSON.stringify(aiActions));
@@ -194,6 +196,33 @@ export default function NoteTakingApp() {
   }, [handleKeyDown]);
 
 
+  const saveNote = useCallback(
+    debounce(async (noteContent) => {
+      if (!noteId) return;
+      setIsSynced(false);
+      try {
+        const { error } = await supabase
+          .from("notes")
+          .upsert({
+            id: noteId,
+            content: noteContent,
+            last_updated: new Date().toISOString(),
+          });
+
+        if (error) throw error;
+        console.log("Note saved successfully");
+        setIsSynced(true);
+        // Hide the "Synced" notice after 3 seconds
+        setTimeout(() => setIsSynced(false), 3000);
+      } catch (error) {
+        console.error("Error saving note:", error);
+        setIsSynced(false);
+      }
+    }, 5000),
+    [noteId]
+  );
+
+
   const handleChange = useCallback(
     (value, viewUpdate) => {
       setContent(value);
@@ -204,7 +233,7 @@ export default function NoteTakingApp() {
       setHistory(prevHistory => [...prevHistory.slice(0, historyIndex + 1), value]);
       setHistoryIndex(prevIndex => prevIndex + 1);
     },
-    [noteId, historyIndex]
+    [noteId, historyIndex, saveNote]
   );
 
 
@@ -251,26 +280,6 @@ export default function NoteTakingApp() {
     document.body.appendChild(element);
     element.click();
     document.body.removeChild(element);
-  };
-
-
-  const saveNote = async (noteContent) => {
-    if (!noteId) return;
-    try {
-      const { error } = await supabase
-        .from("notes")
-        .upsert({
-          id: noteId,
-          content: noteContent,
-          last_updated: new Date().toISOString(),
-        });
-
-
-      if (error) throw error;
-      console.log("Note saved successfully");
-    } catch (error) {
-      console.error("Error saving note:", error);
-    }
   };
 
 
@@ -375,7 +384,7 @@ export default function NoteTakingApp() {
         style={{ fontSize: `${fontSize}px`, zoom: `${uiScale}%` }}
       >
         {/* TopBar */}
-        <div className="flex-shrink-0">
+        <div className="flex-shrink-0 relative">
           <NoteControls
             openFile={openFile}
             downloadFile={downloadFile}
@@ -407,6 +416,11 @@ export default function NoteTakingApp() {
             addNotification={addNotification}
             setIsHelpOpen={setIsHelpOpen}
           />
+          {isSynced && (
+            <div className="absolute top-2 right-2 bg-green-500 text-white px-2 py-1 rounded text-xs">
+              Synced
+            </div>
+          )}
         </div>
         
         {/* Editor Container */}

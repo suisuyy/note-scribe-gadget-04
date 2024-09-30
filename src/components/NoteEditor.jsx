@@ -88,6 +88,27 @@ export const NoteEditor = ({ content, renderMarkdown, darkMode, fontSize, showLi
     return "";
   };
 
+  const executeScripts = (content) => {
+    const tempDiv = document.createElement('div');
+    tempDiv.innerHTML = content;
+    const scripts = tempDiv.getElementsByTagName('script');
+    for (let script of scripts) {
+      if (script.src) {
+        const newScript = document.createElement('script');
+        newScript.src = script.src;
+        document.body.appendChild(newScript);
+      } else {
+        eval(script.innerText);
+      }
+    }
+  };
+
+  useEffect(() => {
+    if (renderMarkdown) {
+      executeScripts(content);
+    }
+  }, [content, renderMarkdown]);
+
   return (
     <div className="h-full w-full overflow-auto"> {/* Added overflow-auto here */}
       {renderMarkdown ? (
@@ -98,6 +119,7 @@ export const NoteEditor = ({ content, renderMarkdown, darkMode, fontSize, showLi
               // Custom components for specific HTML tags
               audio: ({node, ...props}) => <audio controls {...props} />,
               iframe: ({node, ...props}) => <iframe {...props} />,
+              script: ({node, ...props}) => <script {...props} />,
             }}
           >
             {content}
