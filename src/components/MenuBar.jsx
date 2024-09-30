@@ -211,23 +211,23 @@ export const MenuBar = ({
             </MenubarItem>
           </MenubarContent>
         </MenubarMenu>
-      </div>
 
-      {/* Undo/Redo and View Toggle */}
-      <div className="flex items-center space-x-2">
-        <Button variant="ghost" size="icon" onClick={handleUndo}>
-          <Undo className="h-4 w-4" />
-        </Button>
-        <Button variant="ghost" size="icon" onClick={handleRedo}>
-          <Redo className="h-4 w-4" />
-        </Button>
-        <Button
-          variant="ghost"
-          size="icon"
-          onClick={() => setRenderMarkdown(!renderMarkdown)}
-        >
-          <Eye className="h-4 w-4" />
-        </Button>
+        {/* Undo/Redo and View Toggle - Moved here */}
+        <div className="flex items-center space-x-2 ml-2">
+          <Button variant="ghost" size="icon" onClick={handleUndo}>
+            <Undo className="h-4 w-4" />
+          </Button>
+          <Button variant="ghost" size="icon" onClick={handleRedo}>
+            <Redo className="h-4 w-4" />
+          </Button>
+          <Button
+            variant="ghost"
+            size="icon"
+            onClick={() => setRenderMarkdown(!renderMarkdown)}
+          >
+            <Eye className="h-4 w-4" />
+          </Button>
+        </div>
       </div>
     </Menubar>
   );
